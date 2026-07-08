@@ -1,0 +1,8 @@
+EUDI Inspector
+Copyright 2026 Yannick Müller
+
+This product includes software for inspecting EU Digital Identity (EUDI) Wallet
+presentation artifacts (SD-JWT VC + OpenID4VP) entirely client-side, with no
+backend — pasted artifacts never leave the browser.
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
