@@ -1,0 +1,7 @@
+# Allow build scripts only for the deploy toolchain (wrangler pulls these).
+# pnpm blocks dependency build scripts by default; workerd's postinstall fetches
+# the runtime binary and must run for `wrangler deploy` to work.
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true

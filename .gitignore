@@ -13,10 +13,26 @@ coverage/
 # Local-only notes (hold local paths/strategy; never commit)
 *.local.md
 
-# Env / secrets
+# Cloudflare / wrangler
+.wrangler/
+.dev.vars
+.dev.vars.*
+wrangler.local.toml
+
+# Env / secrets / keys (never commit — these belong in GitHub Actions secrets)
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.pkcs8
+*.jks
+*.keystore
+*_rsa
+*_ed25519
+credentials.json
 
 # Editor / OS
 .DS_Store
