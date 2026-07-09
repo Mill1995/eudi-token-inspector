@@ -33,6 +33,14 @@ describe("App", () => {
     expect(await screen.findByText("Fail")).toBeInTheDocument();
   });
 
+  it("shows an informational issuer-trust result for a snapshot issuer", async () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "good-issuance" }));
+    expect(await screen.findByText("EUDI Inspector reference issuer")).toBeInTheDocument();
+    expect(screen.getByText("Trusted")).toBeInTheDocument();
+    expect(screen.getByText(/not an authoritative trust decision/i)).toBeInTheDocument();
+  });
+
   it("renders requested claims and fires the overasking rules for the DCQL request", async () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: "overasking-request-dcql" }));

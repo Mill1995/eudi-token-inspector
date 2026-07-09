@@ -5,6 +5,10 @@ import { decodeArtifact, type DecodeResult, type Example, parseIssuerKey } from 
 import { evaluateOverasking } from "@/overasking/engine";
 import { DEFAULT_OVERASKING_RULES } from "@/overasking/rules";
 import type { OveraskingFinding, OveraskingRule } from "@/overasking/types";
+import { checkIssuerTrust } from "@/trust/checkIssuer";
+import { parseTrustAnchors } from "@/trust/importAnchors";
+import { CURATED_ANCHORS } from "@/trust/snapshot";
+import type { TrustResult } from "@/trust/types";
 import { verifyCredential } from "@/verify/verifyCredential";
 
 function currentUnixSeconds(): string {
@@ -24,6 +28,8 @@ export interface InspectorState {
   readonly expectedAudience: string;
   readonly expectedNonce: string;
   readonly verificationTime: string;
+  /** Extra trust anchors pasted as a JWKS/JWK, merged with the curated snapshot (ADR 0004). */
+  readonly anchorImport: string;
 }
 
 /** Everything the inspector panes read and drive. */
@@ -37,6 +43,8 @@ export interface Inspector {
   /** Verification checks for a credential; null before one decodes or when the artifact is a request. */
   readonly checks: readonly Check[] | null;
   readonly verifying: boolean;
+  /** Informational issuer-trust result for a credential; null before one decodes or for a request. */
+  readonly trust: TrustResult | null;
   /** Overasking findings for a presentation request; null when the artifact is not a request. */
   readonly overasking: readonly OveraskingFinding[] | null;
   /** Every overasking rule with its current enabled flag, for the visible/editable rules panel. */
@@ -51,6 +59,7 @@ function emptyState(): InspectorState {
     expectedAudience: "",
     expectedNonce: "",
     verificationTime: currentUnixSeconds(),
+    anchorImport: "",
   };
 }
 
@@ -73,6 +82,7 @@ export function useInspector(): Inspector {
   const [state, setState] = useState<InspectorState>(emptyState);
   const [checks, setChecks] = useState<readonly Check[] | null>(null);
   const [verifying, setVerifying] = useState(false);
+  const [trust, setTrust] = useState<TrustResult | null>(null);
   const [enabledRuleIds, setEnabledRuleIds] = useState<ReadonlySet<string>>(initialEnabledRuleIds);
 
   const setField = useCallback(
@@ -88,6 +98,7 @@ export function useInspector(): Inspector {
         expectedAudience: example.expectedAudience,
         expectedNonce: example.expectedNonce,
         verificationTime: example.verificationTime || currentUnixSeconds(),
+        anchorImport: "",
       }),
     [],
   );
@@ -118,7 +129,27 @@ export function useInspector(): Inspector {
     return evaluateOverasking(request, active);
   }, [request, enabledRuleIds]);
 
-  const { issuerKeyText, expectedAudience, expectedNonce, verificationTime } = state;
+  const { issuerKeyText, expectedAudience, expectedNonce, verificationTime, anchorImport } = state;
+
+  useEffect(() => {
+    if (credential === undefined) {
+      setTrust(null);
+      return undefined;
+    }
+    let cancelled = false;
+    const anchors = [...CURATED_ANCHORS, ...parseTrustAnchors(anchorImport)];
+    checkIssuerTrust({ credential, issuerKey: parseIssuerKey(issuerKeyText), anchors })
+      .then((result) => {
+        if (!cancelled) setTrust(result);
+      })
+      .catch(() => {
+        if (!cancelled) setTrust(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [credential, issuerKeyText, anchorImport]);
+
   useEffect(() => {
     if (credential === undefined) {
       setChecks(null);
@@ -164,6 +195,7 @@ export function useInspector(): Inspector {
     decode,
     checks,
     verifying,
+    trust,
     overasking,
     ruleStates,
     toggleRule,

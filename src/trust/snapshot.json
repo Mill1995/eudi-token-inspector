@@ -1,0 +1,15 @@
+{
+  "note": "Curated snapshot of known issuers (ADR 0004). Informational only — not an authoritative trust decision. Seeded with the inspector's own reference issuer; extend with sourced, reviewed pilot anchors (EU reference implementation, walt.id demo, LSP pilots) — do not add unverified keys.",
+  "anchors": [
+    {
+      "issuer": "did:key:z6Mkt38FKoX7fqgko8aUXabLGbXDQhyHxSWpfN3N9cSgqyBM",
+      "label": "EUDI Inspector reference issuer",
+      "source": "eudi-solana signer-credo — the inspector's own self-issued did:key test issuer (committed fixtures)",
+      "publicJwk": {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "x": "ydTcVN_egN0g1o5smTv-BmpXPlOo_rmndbp06kN-T4g"
+      }
+    }
+  ]
+}

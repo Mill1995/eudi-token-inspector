@@ -3,6 +3,7 @@ import { ChecksPane } from "@/inspector/ChecksPane";
 import { DecodedPane } from "@/inspector/DecodedPane";
 import { InputPane } from "@/inspector/InputPane";
 import { OveraskingPane } from "@/inspector/OveraskingPane";
+import { TrustPanel } from "@/inspector/TrustPanel";
 import { useInspector } from "@/inspector/useInspector";
 
 function DecodedPlaceholder(): React.JSX.Element {
@@ -37,11 +38,18 @@ function AnalysisPane({
     );
   }
   return (
-    <ChecksPane
-      checks={inspector.checks}
-      verifying={inspector.verifying}
-      hasArtifact={inspector.decode?.ok === true}
-    />
+    <div className="flex flex-col gap-4">
+      <ChecksPane
+        checks={inspector.checks}
+        verifying={inspector.verifying}
+        hasArtifact={inspector.decode?.ok === true}
+      />
+      <TrustPanel
+        trust={inspector.trust}
+        anchorImport={inspector.state.anchorImport}
+        onImportChange={(value) => inspector.setField("anchorImport", value)}
+      />
+    </div>
   );
 }
 
