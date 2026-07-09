@@ -1,0 +1,25 @@
+[
+  {
+    "id": "exact-birthdate-when-age-assertion-suffices",
+    "severity": "high",
+    "title": "Exact birth date requested",
+    "rationale": "An age assertion (age_over_NN / age_in_years) answers an age check without revealing the exact birth date. Requesting the full birthdate collects more than the stated purpose needs — a data-minimisation smell (GDPR Art. 5(1)(c); EUDI ARF selective disclosure).",
+    "match": { "claimNames": ["birthdate", "birth_date"] }
+  },
+  {
+    "id": "portrait-in-remote-flow",
+    "severity": "medium",
+    "title": "Portrait requested in a remote flow",
+    "rationale": "A facial portrait is biometric data. In a remote flow there is no in-person identity check to warrant it, so requesting it is usually disproportionate to the stated purpose.",
+    "match": { "claimNames": ["portrait", "picture", "photo"], "flow": "remote" }
+  },
+  {
+    "id": "unique-identifier-maximises-linkability",
+    "severity": "high",
+    "title": "Unique identifier requested",
+    "rationale": "A document or administrative number is a stable unique identifier that lets verifiers correlate a holder across sessions and services, maximising linkability. Prefer the minimal claims that answer the purpose.",
+    "match": {
+      "claimNames": ["document_number", "administrative_number", "personal_administrative_number"]
+    }
+  }
+]

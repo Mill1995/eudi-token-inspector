@@ -50,8 +50,45 @@ export interface Credential {
   readonly sdHashInput: string;
 }
 
-/** The umbrella type for any pasted, decoded input. v2 adds `Mdoc`; Phase 3 wires `PresentationRequest`. */
-export type Artifact = Credential;
+/** Which query language a Presentation Request carried its claim selection in. */
+export type QueryLanguage = "dcql" | "presentation-exchange";
+
+/** How the presentation is requested: remote (cross-device / redirect) or in-person (proximity). */
+export type PresentationFlow = "remote" | "in-person";
+
+/** One claim a verifier asks for, normalized across DCQL and Presentation Exchange. */
+export interface RequestedClaim {
+  /** The claim path into the credential, e.g. `["birthdate"]` or `["address", "locality"]`. */
+  readonly path: readonly string[];
+  /** The value the claim is pinned to when the Query constrains it (PEX `filter.const`); else absent. */
+  readonly constrainedTo?: unknown;
+}
+
+/** One credential a Presentation Request asks for, with the claims requested from it. */
+export interface RequestedCredential {
+  /** The Query's id for this entry (DCQL credential id / PEX input-descriptor id); absent if unnamed. */
+  readonly id?: string;
+  /** Accepted credential types when the Query pins them (DCQL `meta.vct_values` / PEX `vct` const). */
+  readonly vctValues?: readonly string[];
+  readonly claims: readonly RequestedClaim[];
+}
+
+/** A decoded OpenID4VP Authorization Request — the verifier's ask, normalized across Query languages. */
+export interface PresentationRequest {
+  readonly kind: "presentation-request";
+  readonly queryLanguage: QueryLanguage;
+  readonly flow: PresentationFlow;
+  readonly clientId?: string;
+  readonly nonce?: string;
+  /** The verifier-stated reason for the request (`purpose`), when present. */
+  readonly purpose?: string;
+  readonly credentials: readonly RequestedCredential[];
+  /** The original request object, kept for the raw JSON view. */
+  readonly raw: Readonly<Record<string, unknown>>;
+}
+
+/** The umbrella type for any pasted, decoded input. v2 adds `Mdoc`; pairing a request stays format-agnostic. */
+export type Artifact = Credential | PresentationRequest;
 
 /** A single verification check outcome: passed, failed, or could-not-run — all first-class (ADR 0002). */
 export type CheckOutcome = "pass" | "fail" | "skip";

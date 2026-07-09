@@ -32,4 +32,27 @@ describe("App", () => {
     fireEvent.click(screen.getByRole("button", { name: "bad-wrong-aud" }));
     expect(await screen.findByText("Fail")).toBeInTheDocument();
   });
+
+  it("renders requested claims and fires the overasking rules for the DCQL request", async () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "overasking-request-dcql" }));
+    expect(await screen.findByText(/3 rules fired/i)).toBeInTheDocument();
+    expect(screen.getAllByText("document_number").length).toBeGreaterThan(0);
+    expect(screen.getByText(/facial portrait is biometric data/i)).toBeInTheDocument();
+  });
+
+  it("shows no overasking for the justified PEX baseline request", async () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "request-pex" }));
+    expect(await screen.findByText("age_over_18")).toBeInTheDocument();
+    expect(screen.getByText(/no overasking rules fired/i)).toBeInTheDocument();
+  });
+
+  it("re-evaluates when a rule is toggled off", async () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "overasking-request-dcql" }));
+    expect(await screen.findByText(/3 rules fired/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("checkbox", { name: /portrait requested in a remote flow/i }));
+    expect(await screen.findByText(/2 rules fired/i)).toBeInTheDocument();
+  });
 });

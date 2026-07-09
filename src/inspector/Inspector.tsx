@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChecksPane } from "@/inspector/ChecksPane";
 import { DecodedPane } from "@/inspector/DecodedPane";
 import { InputPane } from "@/inspector/InputPane";
+import { OveraskingPane } from "@/inspector/OveraskingPane";
 import { useInspector } from "@/inspector/useInspector";
 
 function DecodedPlaceholder(): React.JSX.Element {
@@ -20,7 +21,31 @@ function DecodedPlaceholder(): React.JSX.Element {
   );
 }
 
-/** The three-pane inspector: input · decoded · checks. */
+/** The right pane follows the artifact: verification checks for a credential, overasking for a request. */
+function AnalysisPane({
+  inspector,
+}: {
+  inspector: ReturnType<typeof useInspector>;
+}): React.JSX.Element {
+  if (inspector.overasking !== null) {
+    return (
+      <OveraskingPane
+        overasking={inspector.overasking}
+        ruleStates={inspector.ruleStates}
+        toggleRule={inspector.toggleRule}
+      />
+    );
+  }
+  return (
+    <ChecksPane
+      checks={inspector.checks}
+      verifying={inspector.verifying}
+      hasArtifact={inspector.decode?.ok === true}
+    />
+  );
+}
+
+/** The three-pane inspector: input · decoded · analysis (checks or overasking). */
 export function Inspector(): React.JSX.Element {
   const inspector = useInspector();
   return (
@@ -31,11 +56,7 @@ export function Inspector(): React.JSX.Element {
       ) : (
         <DecodedPlaceholder />
       )}
-      <ChecksPane
-        checks={inspector.checks}
-        verifying={inspector.verifying}
-        hasArtifact={inspector.decode?.ok === true}
-      />
+      <AnalysisPane inspector={inspector} />
     </div>
   );
 }
