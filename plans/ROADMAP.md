@@ -8,6 +8,11 @@ zero-backend static SPA.
 Decisions are canonical in `docs/adr/`. Domain terms in `UBIQUITOUS_LANGUAGE.md`.
 Working name **EUDI Inspector**; repo `eudi-token-inspector`; owner `Mill1995`.
 
+> **Status (2026-07-09):** Phases 0–5 shipped and live at
+> `eudi-inspector.yannickjourney.com`. Remaining: vendor a Portfolio card
+> (manual, in the website repo) and add IETF spec vectors (ADR 0008). eIDAS LOTL
+> and mdoc stay v2.
+
 ## Locked decisions (see ADRs)
 
 | #    | Decision                                                                                                                                    |
@@ -17,7 +22,7 @@ Working name **EUDI Inspector**; repo `eudi-token-inspector`; owner `Mill1995`.
 | 0003 | Zero backend. Key resolution: x5c → fetch → **paste fallback**. Bundled trust snapshot. Tokens never leave the browser.                     |
 | 0004 | Trust = configurable anchors + curated pilot/test snapshot, **informational** only.                                                         |
 | 0005 | Overasking = transparent, editable heuristic ruleset (rules-as-JSON), advisory.                                                             |
-| 0006 | Vite + React + TS + Tailwind + shadcn/ui. `@sd-jwt/sd-jwt-vc` + WebCrypto. oxlint/oxfmt/tsc-strict/vitest.                                  |
+| 0006 | Vite + React + TS + Tailwind + shadcn/ui. WebCrypto only — **no `@sd-jwt` dep** (ADR 0006 Update). oxlint/oxfmt/tsc-strict/vitest.          |
 | 0007 | One public repo, Apache-2.0, self-hostable, **no paid scaffolding in v1**.                                                                  |
 | 0008 | Fixtures self-generated via eudi-solana `signer-credo` + IETF spec vectors; known-good + known-bad matrix.                                  |
 | 0009 | Ship-fast MVP, ~1–2 weeks part-time, Show HN / dev-community launch, no hard deadline.                                                      |
