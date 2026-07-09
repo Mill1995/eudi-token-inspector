@@ -42,6 +42,33 @@ describe("evaluateOverasking annotates each finding", () => {
   });
 });
 
+describe("evaluateOverasking flags a request for the whole credential", () => {
+  const wholeCredentialRequest = decodePresentationRequest({
+    nonce: "n",
+    dcql_query: { credentials: [{ id: "pid", meta: { vct_values: ["urn:eudi:pid:1"] } }] },
+  });
+
+  it("fires the whole-credential rule when a DCQL query names no claims", () => {
+    expect(wholeCredentialRequest.credentials[0]?.requestsAllClaims).toBe(true);
+    const ids = evaluateOverasking(wholeCredentialRequest, DEFAULT_OVERASKING_RULES).map(
+      (finding) => finding.rule.id,
+    );
+    expect(ids).toContain("whole-credential-requested");
+  });
+
+  it("does not fire the whole-credential rule when specific claims are named", () => {
+    const scoped = decodePresentationRequest({
+      nonce: "n",
+      dcql_query: { credentials: [{ id: "pid", claims: [{ path: ["age_over_18"] }] }] },
+    });
+    expect(scoped.credentials[0]?.requestsAllClaims).toBe(false);
+    const ids = evaluateOverasking(scoped, DEFAULT_OVERASKING_RULES).map(
+      (finding) => finding.rule.id,
+    );
+    expect(ids).not.toContain("whole-credential-requested");
+  });
+});
+
 describe("evaluateOverasking honours the rule set it is given (in-session toggle)", () => {
   const request = decodePresentationRequest(
     openId4VpFixtures.find((f) => f.id === "overasking-request-dcql")!.request as Record<

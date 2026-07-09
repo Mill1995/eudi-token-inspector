@@ -30,3 +30,16 @@ eIDAS LOTL XML parsing is explicitly deferred (candidate for v2 / team features)
 - The curated snapshot needs occasional maintenance; keep it as a reviewed data
   file, small and sourced.
 - "Trust anchor" import is a real UI surface — design it as a first-class panel.
+
+## Update (2026-07-09) — what shipped
+
+- **Import** accepts a pasted **JWKS or bare JWK** only
+  (`src/trust/importAnchors.ts`, `src/inspector/TrustPanel.tsx`). Issuer certs
+  (PEM/`x5c`) and eIDAS trusted-list URLs are deferred; LOTL stays v2.
+- The **bundled snapshot** ships with a **single** anchor — the inspector's own
+  reference issuer (`src/trust/snapshot.json`). The EU-reference / walt.id / LSP
+  pilot anchors are not yet sourced; they are added as reviewed entries land.
+- Matching is by issuer identifier, else by RFC 7638 key thumbprint. A trust
+  result is `trusted` or `unknown` — there is no `untrusted` verdict — and is
+  independent of signature verification (trust ≠ authenticity), keeping the
+  "informational, not authoritative" framing structural.

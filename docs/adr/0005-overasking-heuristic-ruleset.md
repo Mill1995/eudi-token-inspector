@@ -32,3 +32,19 @@ user-visible data (JSON); each fired rule shows a **severity** and a
 - Must be framed as advice; the UI copy must not imply legal judgment.
 - Rules need a small, documented catalog with rationale references (GDPR data
   minimisation, EUDI ARF selective disclosure guidance).
+
+## Update (2026-07-09) — what shipped
+
+Four of the five seed rules ship in `src/overasking/rules.json`:
+
+- `exact-birthdate-when-age-assertion-suffices` (birth-date vs age assertion).
+- `portrait-in-remote-flow` (portrait/photo in a remote flow).
+- `unique-identifier-maximises-linkability` (document/administrative number).
+- `whole-credential-requested` — fires when a request names no claims and so
+  asks for the entire credential (`match.wholeCredential`, evaluated from
+  `RequestedCredential.requestsAllClaims`).
+
+The fifth seed rule — **sensitive claim with no stated `purpose`** — is
+deferred. The match model (`OveraskingRuleMatch`) supports `claimNames`, `flow`,
+and `wholeCredential`; it does not yet express "purpose absent," which that rule
+needs. Deferring it keeps the shipped rules honest rather than half-implemented.

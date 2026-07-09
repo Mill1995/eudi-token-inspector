@@ -55,7 +55,12 @@ function dcqlCredential(raw: unknown): RequestedCredential {
     if (!isRecord(claim) || !Array.isArray(claim["path"])) return [];
     return [{ path: claim["path"].map((segment) => String(segment)) }];
   });
-  return { ...(id !== undefined && { id }), ...(vctValues !== undefined && { vctValues }), claims };
+  return {
+    ...(id !== undefined && { id }),
+    ...(vctValues !== undefined && { vctValues }),
+    claims,
+    requestsAllClaims: claims.length === 0,
+  };
 }
 
 /** Normalize a PEX `input_descriptors[]` entry; a `vct` const field becomes the credential type. */
@@ -84,6 +89,7 @@ function pexCredential(raw: unknown): RequestedCredential {
     ...(id !== undefined && { id }),
     ...(vctValues.length > 0 && { vctValues }),
     claims,
+    requestsAllClaims: claims.length === 0,
   };
 }
 

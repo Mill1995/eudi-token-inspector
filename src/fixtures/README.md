@@ -42,11 +42,14 @@ only when the schema or matrix changes:
 pnpm --filter @eudi/signer-credo gen:inspector-fixtures
 ```
 
-## Proposed overasking rule ids (Phase 3)
+## Overasking rule ids fired by `overasking-request-dcql`
 
-`overasking-request-dcql` names the rules it should fire; the Phase 3 engine
-(ADR [0005](../../docs/adr/0005-overasking-heuristic-ruleset.md)) implements them:
+This fixture names specific claims, so it fires the three claim-name rules:
 
 - `exact-birthdate-when-age-assertion-suffices`
 - `portrait-in-remote-flow`
 - `unique-identifier-maximises-linkability`
+
+The engine (ADR [0005](../../docs/adr/0005-overasking-heuristic-ruleset.md))
+also ships `whole-credential-requested`, which fires only when a request names
+no claims at all — this fixture does not trip it.

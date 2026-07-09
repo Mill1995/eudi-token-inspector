@@ -21,5 +21,8 @@ function parseAnchor(raw: unknown): TrustAnchor {
   };
 }
 
-/** The bundled curated snapshot of known issuers (ADR 0004), editable in `snapshot.json`. */
+/**
+ * The bundled trust snapshot (ADR 0004), editable in `snapshot.json`. v1 seeds it with a single
+ * anchor — the inspector's own reference issuer; real pilot anchors are added as they are sourced.
+ */
 export const CURATED_ANCHORS: readonly TrustAnchor[] = snapshot.anchors.map(parseAnchor);

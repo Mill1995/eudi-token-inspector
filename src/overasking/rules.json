@@ -21,5 +21,12 @@
     "match": {
       "claimNames": ["document_number", "administrative_number", "personal_administrative_number"]
     }
+  },
+  {
+    "id": "whole-credential-requested",
+    "severity": "high",
+    "title": "Entire credential requested",
+    "rationale": "The request names no specific claims, so it asks for the whole credential rather than the attributes the purpose needs. Requesting everything defeats selective disclosure and collects more than necessary (GDPR Art. 5(1)(c); EUDI ARF data minimisation).",
+    "match": { "claimNames": [], "wholeCredential": true }
   }
 ]

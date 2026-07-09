@@ -34,3 +34,15 @@ the browser** under any path.
   can go stale between builds (documented; a build job keeps it fresh).
 - A proxy for public metadata is a possible later add-on but is explicitly out
   of v1 — see the paid "team features" line (CI trust-list checks) as its home.
+
+## Update (2026-07-09) — what shipped: paste-only
+
+v1 ships **only step 3, the paste path**. Neither `x5c` header parsing (step 1)
+nor in-browser fetch of issuer metadata/JWKS/DID documents (step 2) is
+implemented; the trust snapshot is bundled and never fetched. The issuer key is
+supplied by pasting a JWK/JWKS (`src/inspector/model.ts` `parseIssuerKey`,
+`src/verify/issuerSignature.ts`); with no key the issuer-signature check is
+`skip`. This is stricter than the decision above and makes "nothing leaves the
+browser" hold with zero network egress of any kind (enforced by
+`connect-src 'self'` in `public/_headers`). `x5c` and direct fetch are deferred;
+they are additive and can land later without changing the paste fallback.

@@ -8,10 +8,11 @@ zero-backend static SPA.
 Decisions are canonical in `docs/adr/`. Domain terms in `UBIQUITOUS_LANGUAGE.md`.
 Working name **EUDI Inspector**; repo `eudi-token-inspector`; owner `Mill1995`.
 
-> **Status (2026-07-09):** Phases 0–5 shipped and live at
-> `eudi-inspector.yannickjourney.com`. Remaining: vendor a Portfolio card
-> (manual, in the website repo) and add IETF spec vectors (ADR 0008). eIDAS LOTL
-> and mdoc stay v2.
+> **Status (2026-07-09):** Phases 0–5 implemented and deployed to
+> `eudi-inspector.yannickjourney.com`. Phase-5 follow-ups still open: vendor a
+> Portfolio card (manual, in the website repo) and add IETF spec vectors (ADR
+> 0008). eIDAS LOTL and mdoc stay v2. What actually shipped differs from a few
+> planned items below — see **"Shipped vs planned"** after the decisions table.
 
 ## Locked decisions (see ADRs)
 
@@ -28,6 +29,20 @@ Working name **EUDI Inspector**; repo `eudi-token-inspector`; owner `Mill1995`.
 | 0009 | Ship-fast MVP, ~1–2 weeks part-time, Show HN / dev-community launch, no hard deadline.                                                      |
 | 0010 | Serve at **`eudi-inspector.yannickjourney.com`** (own repo + Cloudflare Pages); Portfolio presents it via a linking card. Revisitable.      |
 | 0011 | **Standalone repo**, not in the eudi-solana monorepo. Fixtures generated in eudi-solana, JSON vectors committed here. See `docs/DEPLOY.md`. |
+
+## Shipped vs planned (2026-07-09)
+
+The plan below is the original intent; these are the deltas in what v1 actually
+ships. Each is recorded in the cited ADR's "Update" section.
+
+| Planned                                                    | Shipped                                                                                     |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Key resolution `x5c → fetch → paste` (0003)                | **Paste only.** No `x5c` parsing, no in-browser fetch — stricter privacy (ADR 0003 Update). |
+| Temporal `exp` / `iat` / `nbf` (0002)                      | **`exp` / `nbf`.** `iat` is not a validity boundary (ADR 0002 Update).                      |
+| Overasking = ADR-0005 seed rules (5)                       | **4 of 5.** "Sensitive claim with no `purpose`" deferred (ADR 0005 Update).                 |
+| Fixtures = generated matrix **+ IETF spec vectors** (0008) | **Generated matrix only.** IETF spec vectors deferred (ADR 0008 Update).                    |
+| Trust import: paste JWKS / cert / eIDAS URL (Phase 4)      | **Paste JWKS/JWK only.** Cert (PEM/x5c) and eIDAS URL deferred; LOTL is v2 (ADR 0004).      |
+| Curated snapshot of pilot/test issuers (0004)              | **One anchor** — the tool's own reference issuer; real pilot anchors deferred (ADR 0004).   |
 
 ## Non-goals (v1)
 
@@ -63,7 +78,7 @@ persisting or transmitting pasted artifacts · being an authoritative trust orac
 ### Phase 2 — Verify
 
 - Issuer signature (WebCrypto ES256/EdDSA/ES384); key resolution x5c → fetch → paste. _Tests:_ good passes; tampered fails; no-key → **skip**.
-- KB-JWT signature; `sd_hash` recompute vs presented disclosures; temporal (`exp`/`iat`/`nbf`). _Tests:_ one negative fixture per check fails on the right check.
+- KB-JWT signature; `sd_hash` recompute vs presented disclosures; temporal (`exp`/`nbf`; `iat` is not a validity boundary). _Tests:_ one negative fixture per check fails on the right check.
 - pass/fail/skip badges with reasons in the checks pane.
 - **DoD:** known-good all-pass; each negative fixture fails exactly its intended check; missing key reads as skip, never fail.
 

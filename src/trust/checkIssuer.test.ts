@@ -45,4 +45,26 @@ describe("checkIssuerTrust compares an issuer against the trust anchors (informa
     const result = await checkIssuerTrust({ credential, anchors: [keyOnly] });
     expect(result.status).toBe("unknown");
   });
+
+  it("keeps a valid thumbprint match even when another anchor is malformed", async () => {
+    const junk: TrustAnchor = {
+      label: "junk",
+      source: "pasted by you",
+      publicJwk: { kty: "not-a-real-kty" } as JsonWebKey,
+    };
+    const keyOnly: TrustAnchor = { label: "pasted", source: "pasted by you", publicJwk: issuerKey };
+    const result = await checkIssuerTrust({ credential, issuerKey, anchors: [junk, keyOnly] });
+    expect(result.status).toBe("trusted");
+    expect(result.basis).toBe("key-thumbprint");
+  });
+
+  it("reports unknown (not a throw) when the resolved issuer key is unusable", async () => {
+    const keyOnly: TrustAnchor = { label: "pasted", source: "pasted by you", publicJwk: issuerKey };
+    const result = await checkIssuerTrust({
+      credential,
+      issuerKey: { kty: "not-a-real-kty" } as JsonWebKey,
+      anchors: [keyOnly],
+    });
+    expect(result.status).toBe("unknown");
+  });
 });

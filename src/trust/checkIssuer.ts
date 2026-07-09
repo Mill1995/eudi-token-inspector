@@ -15,6 +15,18 @@ function issuerOf(credential: Credential): string {
 }
 
 /**
+ * Thumbprint a JWK, returning undefined instead of throwing on a key `jwkThumbprint` cannot
+ * canonicalize. A single malformed pasted key or anchor must not sink the whole trust check.
+ */
+async function safeThumbprint(jwk: JsonWebKey): Promise<string | undefined> {
+  try {
+    return await jwkThumbprint(jwk);
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * Check a credential's issuer against the trust anchors. Matches first by issuer identifier, then —
  * when the issuer key is resolved — by RFC 7638 key thumbprint, so a pasted JWKS trusts an issuer
  * even without an identifier. The result is **informational** (ADR 0004), never a pass/fail verdict.
@@ -31,11 +43,13 @@ export async function checkIssuerTrust(input: TrustInput): Promise<TrustResult> 
   }
 
   if (issuerKey !== undefined) {
-    const keyThumbprint = await jwkThumbprint(issuerKey);
-    const anchorThumbprints = await Promise.all(anchors.map((a) => jwkThumbprint(a.publicJwk)));
-    const match = anchors.find((_, index) => anchorThumbprints[index] === keyThumbprint);
-    if (match !== undefined) {
-      return { issuer, status: "trusted", anchor: match, basis: "key-thumbprint" };
+    const keyThumbprint = await safeThumbprint(issuerKey);
+    if (keyThumbprint !== undefined) {
+      const anchorThumbprints = await Promise.all(anchors.map((a) => safeThumbprint(a.publicJwk)));
+      const match = anchors.find((_, index) => anchorThumbprints[index] === keyThumbprint);
+      if (match !== undefined) {
+        return { issuer, status: "trusted", anchor: match, basis: "key-thumbprint" };
+      }
     }
   }
 

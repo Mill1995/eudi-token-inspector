@@ -23,5 +23,5 @@ function parseRule(raw: unknown): OveraskingRule {
   return raw as unknown as OveraskingRule;
 }
 
-/** The shipped overasking heuristics (ADR 0005), editable in `rules.json`. */
+/** The shipped overasking heuristics — four of ADR 0005's five seed rules — editable in `rules.json`. */
 export const DEFAULT_OVERASKING_RULES: readonly OveraskingRule[] = rawRules.map(parseRule);
