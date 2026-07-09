@@ -23,6 +23,16 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+
+  /* Verification triad — the product's core vocabulary (ADR 0002). */
+  --pass: oklch(0.6 0.14 155);
+  --fail: oklch(0.58 0.22 25);
+  --skip: oklch(0.55 0.03 265);
+  /* Brand + the three artifact segments (issuer JWT · disclosures · KB-JWT). */
+  --brand: oklch(0.54 0.17 255);
+  --seg-issuer: oklch(0.54 0.17 255);
+  --seg-disclosure: oklch(0.55 0.18 300);
+  --seg-kb: oklch(0.52 0.11 195);
 }
 
 .dark {
@@ -44,6 +54,14 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+
+  --pass: oklch(0.72 0.15 158);
+  --fail: oklch(0.7 0.19 22);
+  --skip: oklch(0.7 0.03 265);
+  --brand: oklch(0.72 0.15 255);
+  --seg-issuer: oklch(0.72 0.15 255);
+  --seg-disclosure: oklch(0.74 0.16 300);
+  --seg-kb: oklch(0.74 0.12 195);
 }
 
 @theme inline {
@@ -69,6 +87,13 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-pass: var(--pass);
+  --color-fail: var(--fail);
+  --color-skip: var(--skip);
+  --color-brand: var(--brand);
+  --color-seg-issuer: var(--seg-issuer);
+  --color-seg-disclosure: var(--seg-disclosure);
+  --color-seg-kb: var(--seg-kb);
 }
 
 @layer base {
