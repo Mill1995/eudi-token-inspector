@@ -19,7 +19,8 @@ function SeverityBadge({ severity }: { severity: OveraskingSeverity }): React.JS
 }
 
 function FindingRow({ finding }: { finding: OveraskingFinding }): React.JSX.Element {
-  const matched = finding.matchedClaims.map((claim) => claim.path.join(".")).join(", ");
+  const claimList = finding.matchedClaims.map((claim) => claim.path.join(".")).join(", ");
+  const matched = claimList === "" ? "the entire credential (no specific claims named)" : claimList;
   return (
     <li className="flex flex-col gap-1 border-t py-3 first:border-t-0 first:pt-0">
       <div className="flex items-center justify-between gap-3">

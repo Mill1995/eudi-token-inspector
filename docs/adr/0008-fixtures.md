@@ -25,3 +25,13 @@ already mints SD-JWT VC + KB-JWT via `signer-credo` (`@credo-ts`).
 - Negative fixtures make each verification check independently TDD-able.
 - A fixtures generation script becomes a small dependency on the eudi-solana
   toolchain — keep it a separate, documented dev script, not a runtime coupling.
+
+## Update (2026-07-09) — what shipped
+
+The self-generated matrix shipped in full: seven eudi-solana-signed SD-JWT VC
+vectors (good issuance + presentation and the five negatives — tampered issuer
+sig, `sd_hash` mismatch, expired, wrong `aud`, wrong `nonce`) plus two
+hand-authored OpenID4VP request vectors (`src/fixtures/vectors/`,
+`src/fixtures/README.md`). The **IETF SD-JWT-VC spec examples** ("Supplement"
+above) are **not yet committed** — deferred; the generated matrix already covers
+every Phase 2 check. Adding the spec vectors is tracked in `plans/ROADMAP.md`.

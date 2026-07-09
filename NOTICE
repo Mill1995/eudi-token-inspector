@@ -1,5 +1,5 @@
 EUDI Inspector
-Copyright 2026 Yannick Mueller
+Copyright 2026 Yannick Müller
 
 This product includes software for inspecting EU Digital Identity (EUDI) Wallet
 presentation artifacts (SD-JWT VC + OpenID4VP) entirely client-side, with no

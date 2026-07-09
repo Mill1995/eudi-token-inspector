@@ -92,6 +92,25 @@ describe("decodePresentationRequest normalizes both query languages to one model
   });
 });
 
+describe("decodePresentationRequest marks a whole-credential ask", () => {
+  it("sets requestsAllClaims when a DCQL credential names no claims", () => {
+    const request = decodePresentationRequest({
+      nonce: "n",
+      dcql_query: { credentials: [{ id: "pid", meta: { vct_values: ["urn:eudi:pid:1"] } }] },
+    });
+    expect(request.credentials[0]?.requestsAllClaims).toBe(true);
+    expect(request.credentials[0]?.claims).toEqual([]);
+  });
+
+  it("leaves requestsAllClaims false when specific claims are named", () => {
+    const request = decodePresentationRequest({
+      nonce: "n",
+      dcql_query: { credentials: [{ id: "pid", claims: [{ path: ["age_over_18"] }] }] },
+    });
+    expect(request.credentials[0]?.requestsAllClaims).toBe(false);
+  });
+});
+
 describe("decodePresentationRequest fails fast on an unknown request", () => {
   it("throws when neither a DCQL nor a PEX query is present", () => {
     expect(() => decodePresentationRequest({ response_type: "vp_token" })).toThrow(/query/i);

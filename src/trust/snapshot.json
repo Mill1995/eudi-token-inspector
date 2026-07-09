@@ -1,5 +1,6 @@
 {
-  "note": "Curated snapshot of known issuers (ADR 0004). Informational only — not an authoritative trust decision. Seeded with the inspector's own reference issuer; extend with sourced, reviewed pilot anchors (EU reference implementation, walt.id demo, LSP pilots) — do not add unverified keys.",
+  "note": "Trust snapshot (ADR 0004). Informational only — not an authoritative trust decision. v1 holds a single anchor: the inspector's own reference issuer. Extend with sourced, reviewed pilot anchors (EU reference implementation, walt.id demo, LSP pilots) — do not add unverified keys.",
+  "updated": "2026-07-09",
   "anchors": [
     {
       "issuer": "did:key:z6Mkt38FKoX7fqgko8aUXabLGbXDQhyHxSWpfN3N9cSgqyBM",

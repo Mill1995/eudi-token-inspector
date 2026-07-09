@@ -14,6 +14,11 @@ export interface OveraskingRuleMatch {
   readonly claimNames: readonly string[];
   /** When set, the rule fires only in this presentation flow (e.g. a portrait is a smell only remotely). */
   readonly flow?: PresentationFlow;
+  /**
+   * When true, the rule fires if the request asks for a whole credential (no named claims) rather than
+   * specific claims — independent of `claimNames`. This catches the maximal "give me everything" ask.
+   */
+  readonly wholeCredential?: boolean;
 }
 
 /** One editable overasking heuristic (ADR 0005): metadata plus a declarative match. */

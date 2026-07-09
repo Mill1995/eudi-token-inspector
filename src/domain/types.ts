@@ -71,6 +71,11 @@ export interface RequestedCredential {
   /** Accepted credential types when the Query pins them (DCQL `meta.vct_values` / PEX `vct` const). */
   readonly vctValues?: readonly string[];
   readonly claims: readonly RequestedClaim[];
+  /**
+   * True when the Query names no specific claims (DCQL with no `claims` member, PEX with no field
+   * constraints) and therefore asks for the entire credential — the maximal, least-minimised ask.
+   */
+  readonly requestsAllClaims: boolean;
 }
 
 /** A decoded OpenID4VP Authorization Request — the verifier's ask, normalized across Query languages. */

@@ -28,3 +28,13 @@ v1 performs the full set of local checks, each surfaced as an explicit
 - "skip" is a first-class result — the UI must distinguish "failed" from
   "couldn't check" so a missing key never reads as a forged signature.
 - Each check is independently testable → strong fit for the TDD workflow.
+
+## Update (2026-07-09) — what shipped
+
+- The temporal check (`src/verify/temporal.ts`) verifies **`exp` and `nbf`** on
+  both JWTs, not `iat`. `iat` is an issuance timestamp, not a validity boundary,
+  so treating it as one would fail-close on legitimately fresh tokens; item 4
+  above is narrowed to `exp` / `nbf`.
+- Per the ADR 0006 Update, no SD-JWT library is used — decode, KB-JWT, and
+  `sd_hash` are hand-rolled over WebCrypto; item under Consequences ("needs …
+  an SD-JWT library") is superseded.
