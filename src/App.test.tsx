@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { App } from "@/App";
 
@@ -31,6 +31,15 @@ describe("App", () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: "bad-wrong-aud" }));
     expect(await screen.findByText("Fail")).toBeInTheDocument();
+  });
+
+  it("copies the decoded view to the clipboard", async () => {
+    const writeText = vi.fn(() => Promise.resolve());
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "good-issuance" }));
+    fireEvent.click(await screen.findByRole("button", { name: /copy the decoded view/i }));
+    expect(writeText).toHaveBeenCalled();
   });
 
   it("shows an informational issuer-trust result for a snapshot issuer", async () => {

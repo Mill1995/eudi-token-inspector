@@ -1,11 +1,17 @@
+import { Check, Copy } from "lucide-react";
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
+  Artifact,
   Credential,
   Disclosure,
   PresentationRequest,
   RequestedCredential,
 } from "@/domain/types";
 import type { DecodeResult } from "@/inspector/model";
+import { decodedArtifactJson } from "@/inspector/share";
 
 const QUERY_LANGUAGE_LABELS: Record<PresentationRequest["queryLanguage"], string> = {
   dcql: "DCQL",
@@ -175,13 +181,47 @@ function RequestView({ request }: { request: PresentationRequest }): React.JSX.E
   );
 }
 
+function CopyButton({ artifact }: { artifact: Artifact }): React.JSX.Element {
+  const [copied, setCopied] = useState(false);
+  const onCopy = (): void => {
+    navigator.clipboard
+      .writeText(decodedArtifactJson(artifact))
+      .then(() => {
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 1500);
+      })
+      .catch(() => {
+        // Clipboard unavailable (permission denied / insecure context) — nothing to recover.
+      });
+  };
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      onClick={onCopy}
+      aria-label="Copy the decoded view as JSON"
+    >
+      {copied ? <Check aria-hidden /> : <Copy aria-hidden />}
+      {copied ? "Copied" : "Copy"}
+    </Button>
+  );
+}
+
 /** The decode pane: the artifact split into its segments — a credential's parts or a request's ask. */
 export function DecodedPane({ decode }: { decode: DecodeResult }): React.JSX.Element {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Decoded</CardTitle>
-        <CardDescription>Everything is parsed locally — nothing is sent anywhere.</CardDescription>
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex flex-col gap-1.5">
+            <CardTitle>Decoded</CardTitle>
+            <CardDescription>
+              Everything is parsed locally — nothing is sent anywhere.
+            </CardDescription>
+          </div>
+          {decode.ok && <CopyButton artifact={decode.artifact} />}
+        </div>
       </CardHeader>
       <CardContent>
         {!decode.ok ? (
