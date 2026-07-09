@@ -1,0 +1,30 @@
+{
+  "id": "bad-expired",
+  "kind": "sd-jwt-vc-issuance",
+  "description": "Issuer-signed PID whose exp is one hour before the verification time — temporal check fails, signature valid.",
+  "compact": "eyJ0eXAiOiJkYytzZC1qd3QiLCJhbGciOiJFZERTQSIsImtpZCI6IiN6Nk1rdDM4RktvWDdmcWdrbzhhVVhhYkxHYlhEUWh5SHhTV3BmTjNOOWNTZ3F5Qk0ifQ.eyJ2Y3QiOiJ1cm46ZXVkaTpwaWQ6MSIsImlzcyI6ImRpZDprZXk6ejZNa3QzOEZLb1g3ZnFna284YVVYYWJMR2JYRFFoeUh4U1dwZk4zTjljU2dxeUJNIiwiaWF0IjoxNzgwMDAwMDAwLCJuYmYiOjE3Nzk5OTI4MDAsImV4cCI6MTc3OTk5NjQwMCwiY25mIjp7Imp3ayI6eyJrdHkiOiJFQyIsImtpZCI6IjljZGUxMDQ3LTgyMDQtNDYxYS1iMTljLWNkNTZiY2ZjNDIyMSIsImNydiI6IlAtMjU2IiwieCI6Ik5WMGhxMHI4UWVsVmlLTHBvemZFLXhxVUhBQUNENG5vcTc2VzVzQVdhRWsiLCJ5IjoiVXNlZ0otNDdTUjlEQ3IxYzNvQUhiSmQ1SHRmNEdsV2ltQmNKU3ZwNEp6SSJ9fSwiX3NkIjpbInFwNDBZTzIyY0dUaDlnV3JJV1NWazJWVk95RXBLVGg5dEFlYVVYT2ZLbFEiLCJ0THJXU0J6SFB2VEJxamU4aUltSkxoMllyalJsT29ZSUs0Wl82M3JhX3hNIiwieUlXWE1kVndEUHZLbFJDYU5wSF9OLVU1aW1xN3UwY1ZMUzRsSzhWc2trSSJdLCJfc2RfYWxnIjoic2hhLTI1NiJ9.1EKvHZ53vEK4AQTbJc-gJGI-fjCGgQsI6Drf7Z6BbnDshXGT6omlfpVYYchQOypkOOfF8H8ucd6l31tpdccSDg~WyJCWHYtMzk2TjhwZF9wZGo3IiwiZ2l2ZW5fbmFtZSIsIkFkYSJd~WyJYWkxHY3BIdm5POFVvQjNrIiwiZmFtaWx5X25hbWUiLCJMb3ZlbGFjZSJd~WyJrR1lpcWR1OTd3WWphT1BqIiwiYmlydGhkYXRlIiwiMTgxNS0xMi0xMCJd~",
+  "context": {
+    "verificationTimeSeconds": 1780000000,
+    "issuerPublicJwk": {
+      "kty": "OKP",
+      "kid": "58621c56-b2fe-48f0-a321-be5eb7971510",
+      "crv": "Ed25519",
+      "x": "ydTcVN_egN0g1o5smTv-BmpXPlOo_rmndbp06kN-T4g"
+    },
+    "holderPublicJwk": {
+      "kty": "EC",
+      "kid": "9cde1047-8204-461a-b19c-cd56bcfc4221",
+      "crv": "P-256",
+      "x": "NV0hq0r8QelViKLpozfE-xqUHAACD4noq76W5sAWaEk",
+      "y": "UsegJ-47SR9DCr1c3oAHbJd5Htf4GlWimBcJSvp4JzI"
+    }
+  },
+  "expect": {
+    "issuerSignature": "pass",
+    "temporal": "fail",
+    "keyBindingSignature": "skip",
+    "sdHash": "skip",
+    "audience": "skip",
+    "nonce": "skip"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "id": "good-presentation",
+  "kind": "sd-jwt-vc-presentation",
+  "description": "Full presentation with KB-JWT over the good issuance, bound to the expected aud + nonce — every check passes.",
+  "compact": "eyJ0eXAiOiJkYytzZC1qd3QiLCJhbGciOiJFZERTQSIsImtpZCI6IiN6Nk1rdDM4RktvWDdmcWdrbzhhVVhhYkxHYlhEUWh5SHhTV3BmTjNOOWNTZ3F5Qk0ifQ.eyJ2Y3QiOiJ1cm46ZXVkaTpwaWQ6MSIsImlzcyI6ImRpZDprZXk6ejZNa3QzOEZLb1g3ZnFna284YVVYYWJMR2JYRFFoeUh4U1dwZk4zTjljU2dxeUJNIiwiaWF0IjoxNzgwMDAwMDAwLCJuYmYiOjE3Nzk5OTY0MDAsImV4cCI6MTgxMTUzNjAwMCwiY25mIjp7Imp3ayI6eyJrdHkiOiJFQyIsImtpZCI6IjljZGUxMDQ3LTgyMDQtNDYxYS1iMTljLWNkNTZiY2ZjNDIyMSIsImNydiI6IlAtMjU2IiwieCI6Ik5WMGhxMHI4UWVsVmlLTHBvemZFLXhxVUhBQUNENG5vcTc2VzVzQVdhRWsiLCJ5IjoiVXNlZ0otNDdTUjlEQ3IxYzNvQUhiSmQ1SHRmNEdsV2ltQmNKU3ZwNEp6SSJ9fSwiX3NkIjpbIkFWTEo0alJzLU9kRk9KWUoydl9NQVhwN2ZVd0FmS1JXeU1kUTRfRUJDcmsiLCJZT0tpaldZMFp5OWhja3l6NWZDLWk4NjhadER0Vy1jQlpsNjZNenpxQVRFIiwib001MjF3S0drZVZYZlh1RUh1allLZVNDU1h3RDFlU2ctbmlCWkdwcW9DQSJdLCJfc2RfYWxnIjoic2hhLTI1NiJ9.PMas39T-26GaUPftNdOGD3IkhetEyaQAF3z32VG3Dsr6jIGmhzY_2cEcjH7mVxgx2F_IvCY3xhY8XZdBATiVAA~WyJqYVRwdDl0aEE5RXhGSW15IiwiZ2l2ZW5fbmFtZSIsIkFkYSJd~WyJfSVpyWEhIbTh3ZGk2aHkwIiwiZmFtaWx5X25hbWUiLCJMb3ZlbGFjZSJd~eyJ0eXAiOiJrYitqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpYXQiOjE3ODAwMDAwMDAsIm5vbmNlIjoic1VfS1NjdXNlckNqLTdiSElaM0hrUDZpc1JUbEdpZDU2UV9fdmVxV1A3QSIsImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXVkaS5leGFtcGxlIiwic2RfaGFzaCI6InBGRDA4ZVJHWTlWbER2cGNHUGF4Ty1GY3VKQ3d1U1ZPalcxbmlHWFVnX00ifQ.SHv_ZZ184anMqEyhjSE7zTk5lozKv2XSNVBscGed15fhrKdwizZNIFTupvYn87bnKhAGTCe6fD7E3ADfeYUo0A",
+  "context": {
+    "verificationTimeSeconds": 1780000000,
+    "issuerPublicJwk": {
+      "kty": "OKP",
+      "kid": "58621c56-b2fe-48f0-a321-be5eb7971510",
+      "crv": "Ed25519",
+      "x": "ydTcVN_egN0g1o5smTv-BmpXPlOo_rmndbp06kN-T4g"
+    },
+    "holderPublicJwk": {
+      "kty": "EC",
+      "kid": "9cde1047-8204-461a-b19c-cd56bcfc4221",
+      "crv": "P-256",
+      "x": "NV0hq0r8QelViKLpozfE-xqUHAACD4noq76W5sAWaEk",
+      "y": "UsegJ-47SR9DCr1c3oAHbJd5Htf4GlWimBcJSvp4JzI"
+    },
+    "expectedAudience": "https://verifier.eudi.example",
+    "expectedNonce": "sU_KScuserCj-7bHIZ3HkP6isRTlGid56Q__veqWP7A"
+  },
+  "expect": {
+    "issuerSignature": "pass",
+    "keyBindingSignature": "pass",
+    "sdHash": "pass",
+    "temporal": "pass",
+    "audience": "pass",
+    "nonce": "pass"
+  }
+}
