@@ -1,11 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import type { Check } from "@/domain/types";
+import type { Check, Credential, PresentationRequest } from "@/domain/types";
 import { decodeArtifact, type DecodeResult, type Example, parseIssuerKey } from "@/inspector/model";
+import { evaluateOverasking } from "@/overasking/engine";
+import { DEFAULT_OVERASKING_RULES } from "@/overasking/rules";
+import type { OveraskingFinding, OveraskingRule } from "@/overasking/types";
 import { verifyCredential } from "@/verify/verifyCredential";
 
 function currentUnixSeconds(): string {
   return String(Math.floor(Date.now() / 1000));
+}
+
+/** One overasking rule paired with whether it is currently active (in-session toggle). */
+export interface RuleState {
+  readonly rule: OveraskingRule;
+  readonly enabled: boolean;
 }
 
 /** The editable inputs of the inspector: the artifact and the verifier-supplied context. */
@@ -25,9 +34,14 @@ export interface Inspector {
   readonly clear: () => void;
   /** Decode outcome, or null while the artifact box is empty (the empty state). */
   readonly decode: DecodeResult | null;
-  /** Verification checks once they resolve; null before an artifact decodes. */
+  /** Verification checks for a credential; null before one decodes or when the artifact is a request. */
   readonly checks: readonly Check[] | null;
   readonly verifying: boolean;
+  /** Overasking findings for a presentation request; null when the artifact is not a request. */
+  readonly overasking: readonly OveraskingFinding[] | null;
+  /** Every overasking rule with its current enabled flag, for the visible/editable rules panel. */
+  readonly ruleStates: readonly RuleState[];
+  readonly toggleRule: (id: string) => void;
 }
 
 function emptyState(): InspectorState {
@@ -40,11 +54,26 @@ function emptyState(): InspectorState {
   };
 }
 
-/** Drive the inspector: paste/edit inputs, decode locally, and run the ADR-0002 checks on WebCrypto. */
+function initialEnabledRuleIds(): ReadonlySet<string> {
+  return new Set(DEFAULT_OVERASKING_RULES.map((rule) => rule.id));
+}
+
+function credentialOf(decode: DecodeResult | null): Credential | undefined {
+  return decode?.ok === true && decode.artifact.kind === "credential" ? decode.artifact : undefined;
+}
+
+function requestOf(decode: DecodeResult | null): PresentationRequest | null {
+  return decode?.ok === true && decode.artifact.kind === "presentation-request"
+    ? decode.artifact
+    : null;
+}
+
+/** Drive the inspector: paste/edit an artifact, decode locally, then verify a credential or flag overasking. */
 export function useInspector(): Inspector {
   const [state, setState] = useState<InspectorState>(emptyState);
   const [checks, setChecks] = useState<readonly Check[] | null>(null);
   const [verifying, setVerifying] = useState(false);
+  const [enabledRuleIds, setEnabledRuleIds] = useState<ReadonlySet<string>>(initialEnabledRuleIds);
 
   const setField = useCallback(
     (field: keyof InspectorState, value: string) =>
@@ -54,21 +83,40 @@ export function useInspector(): Inspector {
   const loadExample = useCallback(
     (example: Example) =>
       setState({
-        input: example.compact,
+        input: example.input,
         issuerKeyText: example.issuerKeyText,
         expectedAudience: example.expectedAudience,
         expectedNonce: example.expectedNonce,
-        verificationTime: example.verificationTime,
+        verificationTime: example.verificationTime || currentUnixSeconds(),
       }),
     [],
   );
   const clear = useCallback(() => setState(emptyState()), []);
+  const toggleRule = useCallback((id: string) => {
+    setEnabledRuleIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
 
   const decode = useMemo<DecodeResult | null>(
     () => (state.input.trim() === "" ? null : decodeArtifact(state.input)),
     [state.input],
   );
-  const credential = decode?.ok === true ? decode.credential : undefined;
+  const credential = credentialOf(decode);
+  const request = requestOf(decode);
+
+  const ruleStates = useMemo<readonly RuleState[]>(
+    () => DEFAULT_OVERASKING_RULES.map((rule) => ({ rule, enabled: enabledRuleIds.has(rule.id) })),
+    [enabledRuleIds],
+  );
+  const overasking = useMemo<readonly OveraskingFinding[] | null>(() => {
+    if (request === null) return null;
+    const active = DEFAULT_OVERASKING_RULES.filter((rule) => enabledRuleIds.has(rule.id));
+    return evaluateOverasking(request, active);
+  }, [request, enabledRuleIds]);
 
   const { issuerKeyText, expectedAudience, expectedNonce, verificationTime } = state;
   useEffect(() => {
@@ -108,5 +156,16 @@ export function useInspector(): Inspector {
     };
   }, [credential, issuerKeyText, expectedAudience, expectedNonce, verificationTime]);
 
-  return { state, setField, loadExample, clear, decode, checks, verifying };
+  return {
+    state,
+    setField,
+    loadExample,
+    clear,
+    decode,
+    checks,
+    verifying,
+    overasking,
+    ruleStates,
+    toggleRule,
+  };
 }

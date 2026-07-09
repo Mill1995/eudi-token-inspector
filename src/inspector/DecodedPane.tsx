@@ -1,6 +1,16 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Credential, Disclosure } from "@/domain/types";
+import type {
+  Credential,
+  Disclosure,
+  PresentationRequest,
+  RequestedCredential,
+} from "@/domain/types";
 import type { DecodeResult } from "@/inspector/model";
+
+const QUERY_LANGUAGE_LABELS: Record<PresentationRequest["queryLanguage"], string> = {
+  dcql: "DCQL",
+  "presentation-exchange": "Presentation Exchange",
+};
 
 function JsonBlock({ value }: { value: unknown }): React.JSX.Element {
   return (
@@ -82,7 +92,90 @@ function CredentialView({ credential }: { credential: Credential }): React.JSX.E
   );
 }
 
-/** The decode pane: the artifact split into its issuer JWT, disclosures, and KB-JWT segments. */
+function MetaRow({ label, value }: { label: string; value: string }): React.JSX.Element {
+  return (
+    <div className="flex flex-col gap-0.5 font-mono text-xs">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="break-all">{value}</span>
+    </div>
+  );
+}
+
+function requestedCredentialKey(credential: RequestedCredential, index: number): string {
+  return (
+    credential.id ??
+    (credential.claims.map((claim) => claim.path.join(".")).join("|") || `cred-${index}`)
+  );
+}
+
+function RequestedCredentialRow({
+  credential,
+}: {
+  credential: RequestedCredential;
+}): React.JSX.Element {
+  return (
+    <li className="flex flex-col gap-1.5">
+      {credential.vctValues !== undefined && (
+        <div className="font-mono text-xs">
+          <span className="text-muted-foreground">type </span>
+          <span className="break-all">{credential.vctValues.join(", ")}</span>
+        </div>
+      )}
+      {credential.claims.length > 0 ? (
+        <ul className="flex flex-col gap-1">
+          {credential.claims.map((claim) => (
+            <li key={claim.path.join(".")} className="font-mono text-xs break-all">
+              <span className="text-seg-disclosure font-semibold">{claim.path.join(".")}</span>
+              {claim.constrainedTo !== undefined && (
+                <>
+                  <span className="text-muted-foreground"> = </span>
+                  <span>{JSON.stringify(claim.constrainedTo)}</span>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-muted-foreground text-xs">
+          No named claims — the whole credential is requested.
+        </p>
+      )}
+    </li>
+  );
+}
+
+function RequestView({ request }: { request: PresentationRequest }): React.JSX.Element {
+  const claimCount = request.credentials.reduce((total, cred) => total + cred.claims.length, 0);
+  return (
+    <div className="flex flex-col gap-4">
+      <Segment
+        accent="bg-seg-issuer"
+        title="Request"
+        hint={QUERY_LANGUAGE_LABELS[request.queryLanguage]}
+      >
+        <div className="grid grid-cols-2 gap-3">
+          <MetaRow label="flow" value={request.flow} />
+          {request.clientId !== undefined && <MetaRow label="client_id" value={request.clientId} />}
+          {request.nonce !== undefined && <MetaRow label="nonce" value={request.nonce} />}
+        </div>
+        {request.purpose !== undefined && <MetaRow label="purpose" value={request.purpose} />}
+      </Segment>
+
+      <Segment accent="bg-seg-disclosure" title="Requested claims" hint={`${claimCount} requested`}>
+        <ul className="flex flex-col gap-3">
+          {request.credentials.map((credential, index) => (
+            <RequestedCredentialRow
+              key={requestedCredentialKey(credential, index)}
+              credential={credential}
+            />
+          ))}
+        </ul>
+      </Segment>
+    </div>
+  );
+}
+
+/** The decode pane: the artifact split into its segments — a credential's parts or a request's ask. */
 export function DecodedPane({ decode }: { decode: DecodeResult }): React.JSX.Element {
   return (
     <Card>
@@ -91,10 +184,12 @@ export function DecodedPane({ decode }: { decode: DecodeResult }): React.JSX.Ele
         <CardDescription>Everything is parsed locally — nothing is sent anywhere.</CardDescription>
       </CardHeader>
       <CardContent>
-        {decode.ok ? (
-          <CredentialView credential={decode.credential} />
-        ) : (
+        {!decode.ok ? (
           <p className="text-fail text-sm">Couldn&rsquo;t decode this artifact: {decode.error}</p>
+        ) : decode.artifact.kind === "credential" ? (
+          <CredentialView credential={decode.artifact} />
+        ) : (
+          <RequestView request={decode.artifact} />
         )}
       </CardContent>
     </Card>

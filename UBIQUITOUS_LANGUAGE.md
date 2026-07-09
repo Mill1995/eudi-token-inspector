@@ -12,6 +12,8 @@ session; terms are added as decisions land.
 | **KB-JWT**               | Key-Binding JWT: a holder-signed JWT proving possession of the credential's bound key, carrying `sd_hash`, `nonce`, `aud`. | binding token, holder JWT |
 | **Presentation Request** | An OpenID4VP Authorization Request stating which claims a verifier wants.                                                  | auth request, ask         |
 | **Query**                | The claim-selection body of a Presentation Request: `presentation_definition` (older) or DCQL (`dcql_query`, newer).       | pex, definition           |
+| **Query Language**       | Which shape a Query is in — `dcql` or `presentation-exchange`. The inspector normalizes both to one model.                 | format                    |
+| **Requested Claim**      | One claim a verifier asks for, normalized across Query languages to a `path` (plus an optional pinned value).              | field, constraint         |
 
 ## Actors
 
@@ -33,14 +35,15 @@ session; terms are added as decisions land.
 
 ## Trust & minimisation
 
-| Term                 | Definition                                                                                                 | Aliases to avoid |
-| -------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------- |
-| **Trust Anchor**     | A public key / cert / issuer identifier the user declares trustworthy, against which an Issuer is checked. | root, CA         |
-| **Curated Snapshot** | The bundled, reviewed set of well-known pilot/test issuers shipped with the app.                           | default list     |
-| **PID**              | Person Identification Data: the core EUDI identity credential.                                             | ID credential    |
-| **`purpose`**        | The verifier-stated reason for a requested claim, carried in the Query.                                    | reason           |
-| **Overasking Rule**  | One editable heuristic that fires on a data-minimisation smell, with severity + rationale.                 | check, lint      |
-| **Result badge**     | An artifact check outcome: **pass** / **fail** / **skip** (skip = not enough input to decide).             | status, error    |
+| Term                   | Definition                                                                                                 | Aliases to avoid   |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------ |
+| **Trust Anchor**       | A public key / cert / issuer identifier the user declares trustworthy, against which an Issuer is checked. | root, CA           |
+| **Curated Snapshot**   | The bundled, reviewed set of well-known pilot/test issuers shipped with the app.                           | default list       |
+| **PID**                | Person Identification Data: the core EUDI identity credential.                                             | ID credential      |
+| **`purpose`**          | The verifier-stated reason for a requested claim, carried in the Query.                                    | reason             |
+| **Overasking Rule**    | One editable heuristic that fires on a data-minimisation smell, with severity + rationale.                 | check, lint        |
+| **Overasking Finding** | An Overasking Rule that fired against a request, carrying the Requested Claims that tripped it. Advisory.  | violation, verdict |
+| **Result badge**       | An artifact check outcome: **pass** / **fail** / **skip** (skip = not enough input to decide).             | status, error      |
 
 ## Relationships
 
