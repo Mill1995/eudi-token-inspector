@@ -1,0 +1,41 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChecksPane } from "@/inspector/ChecksPane";
+import { DecodedPane } from "@/inspector/DecodedPane";
+import { InputPane } from "@/inspector/InputPane";
+import { useInspector } from "@/inspector/useInspector";
+
+function DecodedPlaceholder(): React.JSX.Element {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Decoded</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-muted-foreground text-sm">
+          Paste an artifact or load an example to see its header, payload, and every disclosure
+          resolved.
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+
+/** The three-pane inspector: input · decoded · checks. */
+export function Inspector(): React.JSX.Element {
+  const inspector = useInspector();
+  return (
+    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)_minmax(0,1fr)]">
+      <InputPane inspector={inspector} />
+      {inspector.decode !== null ? (
+        <DecodedPane decode={inspector.decode} />
+      ) : (
+        <DecodedPlaceholder />
+      )}
+      <ChecksPane
+        checks={inspector.checks}
+        verifying={inspector.verifying}
+        hasArtifact={inspector.decode?.ok === true}
+      />
+    </div>
+  );
+}
