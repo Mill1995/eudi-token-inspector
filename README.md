@@ -25,8 +25,7 @@ Live at **[eudi-inspector.yannickjourney.com](https://eudi-inspector.yannickjour
 - **Overasking** — flag data-minimisation smells in a request against an
   editable, advisory rule set (never a verdict).
 
-See [`plans/ROADMAP.md`](plans/ROADMAP.md) for the plan and
-[`docs/adr/`](docs/adr/) for the decisions behind it.
+See [`docs/adr/`](docs/adr/) for the architecture decisions behind it.
 
 ## Development
 

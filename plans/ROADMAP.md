@@ -16,19 +16,19 @@ Working name **EUDI Inspector**; repo `eudi-token-inspector`; owner `Mill1995`.
 
 ## Locked decisions (see ADRs)
 
-| #    | Decision                                                                                                                                    |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0001 | v1 = SD-JWT VC (+KB-JWT) + OpenID4VP request. mdoc → v2.                                                                                    |
-| 0002 | Full local verification: sig, KB sig, sd_hash, temporal, nonce/aud, trust. pass/fail/**skip**.                                              |
-| 0003 | Zero backend. Key resolution: x5c → fetch → **paste fallback**. Bundled trust snapshot. Tokens never leave the browser.                     |
-| 0004 | Trust = configurable anchors + curated pilot/test snapshot, **informational** only.                                                         |
-| 0005 | Overasking = transparent, editable heuristic ruleset (rules-as-JSON), advisory.                                                             |
-| 0006 | Vite + React + TS + Tailwind + shadcn/ui. WebCrypto only — **no `@sd-jwt` dep** (ADR 0006 Update). oxlint/oxfmt/tsc-strict/vitest.          |
-| 0007 | One public repo, Apache-2.0, self-hostable, **no paid scaffolding in v1**.                                                                  |
-| 0008 | Fixtures self-generated via eudi-solana `signer-credo` + IETF spec vectors; known-good + known-bad matrix.                                  |
-| 0009 | Ship-fast MVP, ~1–2 weeks part-time, Show HN / dev-community launch, no hard deadline.                                                      |
-| 0010 | Serve at **`eudi-inspector.yannickjourney.com`** (own repo + Cloudflare Pages); Portfolio presents it via a linking card. Revisitable.      |
-| 0011 | **Standalone repo**, not in the eudi-solana monorepo. Fixtures generated in eudi-solana, JSON vectors committed here. See `docs/DEPLOY.md`. |
+| #    | Decision                                                                                                                               |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 0001 | v1 = SD-JWT VC (+KB-JWT) + OpenID4VP request. mdoc → v2.                                                                               |
+| 0002 | Full local verification: sig, KB sig, sd_hash, temporal, nonce/aud, trust. pass/fail/**skip**.                                         |
+| 0003 | Zero backend. Key resolution: x5c → fetch → **paste fallback**. Bundled trust snapshot. Tokens never leave the browser.                |
+| 0004 | Trust = configurable anchors + curated pilot/test snapshot, **informational** only.                                                    |
+| 0005 | Overasking = transparent, editable heuristic ruleset (rules-as-JSON), advisory.                                                        |
+| 0006 | Vite + React + TS + Tailwind + shadcn/ui. WebCrypto only — **no `@sd-jwt` dep** (ADR 0006 Update). oxlint/oxfmt/tsc-strict/vitest.     |
+| 0007 | One public repo, Apache-2.0, self-hostable, **no monetization plumbing in v1**.                                                        |
+| 0008 | Fixtures self-generated via eudi-solana `signer-credo` + IETF spec vectors; known-good + known-bad matrix.                             |
+| 0009 | Ship-fast MVP, ~1–2 weeks part-time, Show HN / dev-community launch, no hard deadline.                                                 |
+| 0010 | Serve at **`eudi-inspector.yannickjourney.com`** (own repo + Cloudflare Pages); Portfolio presents it via a linking card. Revisitable. |
+| 0011 | **Standalone repo**, not in the eudi-solana monorepo. Fixtures generated in eudi-solana, JSON vectors committed here.                  |
 
 ## Shipped vs planned (2026-07-09)
 
@@ -60,7 +60,7 @@ Capabilities added past the original six-check design:
 
 ## Non-goals (v1)
 
-mdoc/mDL · eIDAS LOTL XML parsing · any backend/proxy · paid/team features ·
+mdoc/mDL · eIDAS LOTL XML parsing · any backend/proxy ·
 persisting or transmitting pasted artifacts · being an authoritative trust oracle.
 
 ## Architecture shape
@@ -131,4 +131,4 @@ persisting or transmitting pasted artifacts · being an authoritative trust orac
 ## v2 backlog (explicitly deferred)
 
 mdoc/mDL (CBOR/COSE) · eIDAS LOTL parsing · optional serverless proxy for public
-metadata · paid team features (CI trust-list checks, audit export, CI rule packs).
+metadata.

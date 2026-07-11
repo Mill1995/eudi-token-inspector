@@ -20,6 +20,6 @@ iterate in public.
 - Quality bar is "genuinely useful and correct", not "demo by date X" — matches
   the TDD workflow (correctness gated by the negative fixtures of ADR 0008).
 - Scope discipline: anything not in the three headline features + polish is v2
-  (mdoc, eIDAS LOTL, paid features).
+  (mdoc, eIDAS LOTL, future extensions).
 - Launch is a deliverable: the README and launch post are part of the final phase,
   not an afterthought.
