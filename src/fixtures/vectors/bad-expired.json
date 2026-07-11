@@ -24,6 +24,7 @@
     "temporal": "fail",
     "keyBindingSignature": "skip",
     "sdHash": "skip",
+    "disclosureIntegrity": "pass",
     "audience": "skip",
     "nonce": "skip"
   }

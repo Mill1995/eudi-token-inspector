@@ -1,9 +1,11 @@
 import type { Fixture, OpenId4VpFixture, SdJwtFixture } from "@/fixtures/types";
 import badExpired from "@/fixtures/vectors/bad-expired.json";
+import badForgedDisclosure from "@/fixtures/vectors/bad-forged-disclosure.json";
 import badSdHashMismatch from "@/fixtures/vectors/bad-sd-hash-mismatch.json";
 import badTamperedIssuerSig from "@/fixtures/vectors/bad-tampered-issuer-sig.json";
 import badWrongAud from "@/fixtures/vectors/bad-wrong-aud.json";
 import badWrongNonce from "@/fixtures/vectors/bad-wrong-nonce.json";
+import goodIssuanceEs256 from "@/fixtures/vectors/good-issuance-es256.json";
 import goodIssuance from "@/fixtures/vectors/good-issuance.json";
 import goodPresentation from "@/fixtures/vectors/good-presentation.json";
 import overaskingRequestDcql from "@/fixtures/vectors/overasking-request-dcql.json";
@@ -34,10 +36,12 @@ function parseFixture(raw: unknown): Fixture {
 /** Every committed test vector, good and bad. */
 export const fixtures: readonly Fixture[] = [
   goodIssuance,
+  goodIssuanceEs256,
   goodPresentation,
   badTamperedIssuerSig,
   badExpired,
   badSdHashMismatch,
+  badForgedDisclosure,
   badWrongAud,
   badWrongNonce,
   overaskingRequestDcql,

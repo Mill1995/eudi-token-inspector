@@ -25,6 +25,7 @@
     "issuerSignature": "pass",
     "keyBindingSignature": "pass",
     "sdHash": "pass",
+    "disclosureIntegrity": "pass",
     "temporal": "pass",
     "audience": "fail",
     "nonce": "pass"

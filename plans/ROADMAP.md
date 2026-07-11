@@ -35,14 +35,28 @@ Working name **EUDI Inspector**; repo `eudi-token-inspector`; owner `Mill1995`.
 The plan below is the original intent; these are the deltas in what v1 actually
 ships. Each is recorded in the cited ADR's "Update" section.
 
-| Planned                                                    | Shipped                                                                                     |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Key resolution `x5c → fetch → paste` (0003)                | **Paste only.** No `x5c` parsing, no in-browser fetch — stricter privacy (ADR 0003 Update). |
-| Temporal `exp` / `iat` / `nbf` (0002)                      | **`exp` / `nbf`.** `iat` is not a validity boundary (ADR 0002 Update).                      |
-| Overasking = ADR-0005 seed rules (5)                       | **4 of 5.** "Sensitive claim with no `purpose`" deferred (ADR 0005 Update).                 |
-| Fixtures = generated matrix **+ IETF spec vectors** (0008) | **Generated matrix only.** IETF spec vectors deferred (ADR 0008 Update).                    |
-| Trust import: paste JWKS / cert / eIDAS URL (Phase 4)      | **Paste JWKS/JWK only.** Cert (PEM/x5c) and eIDAS URL deferred; LOTL is v2 (ADR 0004).      |
-| Curated snapshot of pilot/test issuers (0004)              | **One anchor** — the tool's own reference issuer; real pilot anchors deferred (ADR 0004).   |
+| Planned                                                    | Shipped                                                                                                 |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Key resolution `x5c → fetch → paste` (0003)                | **Paste only.** No `x5c` parsing, no in-browser fetch — stricter privacy (ADR 0003 Update).             |
+| Temporal `exp` / `iat` / `nbf` (0002)                      | **`exp` / `nbf`.** `iat` is not a validity boundary (ADR 0002 Update).                                  |
+| Overasking = ADR-0005 seed rules (5)                       | **4 of 5.** "Sensitive claim with no `purpose`" deferred (ADR 0005 Update).                             |
+| Fixtures = generated matrix **+ IETF spec vectors** (0008) | **Generated matrix + an independent ES256 vector.** IETF spec vectors still deferred (ADR 0008 Update). |
+| Trust import: paste JWKS / cert / eIDAS URL (Phase 4)      | **Paste JWKS/JWK only.** Cert (PEM/x5c) and eIDAS URL deferred; LOTL is v2 (ADR 0004).                  |
+| Curated snapshot of pilot/test issuers (0004)              | **One anchor** — the tool's own reference issuer; real pilot anchors deferred (ADR 0004).               |
+
+### Beyond the plan (2026-07-11)
+
+Capabilities added past the original six-check design:
+
+- **Disclosure↔issuer binding** — a seventh check recomputes each disclosure's
+  `_sd` digest and confirms the issuer signed it, and the same resolver
+  reconstructs the plaintext claim set in the decode pane (ADR 0002 Update). The
+  original checks did not bind disclosures to the issuer signature; without this an
+  injected disclosure passed.
+- **Whole-credential over-ask** rule (ADR 0005 Update).
+- **OpenID4VP request intake** accepts a signed request object (JAR) or
+  `{"request": "<jwt>"}`, not only decoded JSON; `request_uri` is refused (no
+  network).
 
 ## Non-goals (v1)
 

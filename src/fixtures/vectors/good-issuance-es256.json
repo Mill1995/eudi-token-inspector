@@ -1,0 +1,30 @@
+{
+  "id": "good-issuance-es256",
+  "kind": "sd-jwt-vc-issuance",
+  "description": "Independent ES256 (P-256) issuer-signed PID SD-JWT VC minted by node crypto (a different signer than the EdDSA vectors); exercises the ES256 verification path end-to-end.",
+  "compact": "eyJ0eXAiOiJkYytzZC1qd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6Imlzc3Vlci1lczI1Ni0xIn0.eyJ2Y3QiOiJ1cm46ZXVkaTpwaWQ6MSIsImlzcyI6Imh0dHBzOi8vaXNzdWVyLmV4YW1wbGUiLCJpYXQiOjE3ODAwMDAwMDAsIm5iZiI6MTc3OTk5NjQwMCwiZXhwIjoxODExNTM2MDAwLCJfc2QiOlsiLUxGOGIyQVZqTVhwdlB6NGR1U2xoa0h4aFRoWERCZEQ4dHh3SDh3QjZVNCIsImU5WlBoc010RFJwSkVJclMwdnhTM2lUaXBxbEJjbGlOSFZBOEpTR3FVWkUiLCJ6ejlucGYxSm94UFpiTnhsY3lkeTdFYTg3ZWRjM0lSZ1ZuMDBPdk1PVHlVIl0sIl9zZF9hbGciOiJzaGEtMjU2In0.JqJ1VIJG8KkhL4UFURHZmDGZ9ZCZIDMNlj3DkAADppamg-qlZAdaQvJIHHRrb5eOFHkxWWY897Eom1HRFA4TLQ~WyJjMkZzZEMxbmJpMWxjekkxTmciLCJnaXZlbl9uYW1lIiwiR3JhY2UiXQ~WyJjMkZzZEMxbWJpMWxjekkxTmciLCJmYW1pbHlfbmFtZSIsIkhvcHBlciJd~WyJjMkZzZEMxaVpDMWxjekkxTmciLCJiaXJ0aGRhdGUiLCIxOTA2LTEyLTA5Il0~",
+  "context": {
+    "verificationTimeSeconds": 1780000000,
+    "issuerPublicJwk": {
+      "kty": "EC",
+      "crv": "P-256",
+      "x": "6MbK31TvfnIltA3mnaQzLWjEZ9cPs1PdtVCVSYaTeJE",
+      "y": "EQsF8aFivdCwU--gYWT1pS5cprcyqDfcHpxVn8cUlEQ"
+    },
+    "holderPublicJwk": {
+      "kty": "EC",
+      "crv": "P-256",
+      "x": "6MbK31TvfnIltA3mnaQzLWjEZ9cPs1PdtVCVSYaTeJE",
+      "y": "EQsF8aFivdCwU--gYWT1pS5cprcyqDfcHpxVn8cUlEQ"
+    }
+  },
+  "expect": {
+    "issuerSignature": "pass",
+    "keyBindingSignature": "skip",
+    "sdHash": "skip",
+    "disclosureIntegrity": "pass",
+    "temporal": "pass",
+    "audience": "skip",
+    "nonce": "skip"
+  }
+}

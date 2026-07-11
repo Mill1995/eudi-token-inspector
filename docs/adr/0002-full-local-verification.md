@@ -31,6 +31,14 @@ v1 performs the full set of local checks, each surfaced as an explicit
 
 ## Update (2026-07-09) — what shipped
 
+- A seventh check, **disclosure↔issuer binding** (`src/verify/disclosureIntegrity.ts`,
+  `src/domain/disclosures.ts`), was added beyond the original six. It recomputes
+  each presented disclosure's SHA-256 digest and confirms an issuer-signed `_sd`
+  entry (or array `...` placeholder) references it — recursing into nested
+  selective disclosure. The issuer signature covers only the issuer JWT, not the
+  disclosures appended after it, so without this a disclosure injected after
+  issuance would pass unnoticed. The same resolver reconstructs the plaintext
+  claim set shown in the decode pane.
 - The temporal check (`src/verify/temporal.ts`) verifies **`exp` and `nbf`** on
   both JWTs, not `iat`. `iat` is an issuance timestamp, not a validity boundary,
   so treating it as one would fail-close on legitimately fresh tokens; item 4

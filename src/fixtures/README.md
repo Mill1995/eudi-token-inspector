@@ -10,24 +10,31 @@ that fails on it and no other — see the `expect` map (`pass` / `fail` / `skip`
 
 ## The matrix
 
-| id                        | kind                   | intended result                                    |
-| ------------------------- | ---------------------- | -------------------------------------------------- |
-| `good-issuance`           | sd-jwt-vc-issuance     | issuer signature + temporal pass; decodes cleanly  |
-| `bad-tampered-issuer-sig` | sd-jwt-vc-issuance     | issuer signature **fail** (one byte flipped)       |
-| `bad-expired`             | sd-jwt-vc-issuance     | temporal **fail** (`exp` before verification time) |
-| `good-presentation`       | sd-jwt-vc-presentation | every check passes                                 |
-| `bad-sd-hash-mismatch`    | sd-jwt-vc-presentation | `sd_hash` **fail** (a disclosure dropped)          |
-| `bad-wrong-aud`           | sd-jwt-vc-presentation | audience **fail**                                  |
-| `bad-wrong-nonce`         | sd-jwt-vc-presentation | nonce **fail**                                     |
-| `overasking-request-dcql` | openid4vp-request      | overasking rules fire (DCQL query)                 |
-| `request-pex`             | openid4vp-request      | no overasking (Presentation Exchange baseline)     |
+| id                        | kind                   | intended result                                          |
+| ------------------------- | ---------------------- | -------------------------------------------------------- |
+| `good-issuance`           | sd-jwt-vc-issuance     | issuer signature + temporal pass; decodes cleanly        |
+| `good-issuance-es256`     | sd-jwt-vc-issuance     | ES256 issuer signature + disclosure binding pass         |
+| `bad-tampered-issuer-sig` | sd-jwt-vc-issuance     | issuer signature **fail** (one byte flipped)             |
+| `bad-expired`             | sd-jwt-vc-issuance     | temporal **fail** (`exp` before verification time)       |
+| `bad-forged-disclosure`   | sd-jwt-vc-issuance     | disclosure-integrity **fail** (digest absent from `_sd`) |
+| `good-presentation`       | sd-jwt-vc-presentation | every check passes                                       |
+| `bad-sd-hash-mismatch`    | sd-jwt-vc-presentation | `sd_hash` **fail** (a disclosure dropped)                |
+| `bad-wrong-aud`           | sd-jwt-vc-presentation | audience **fail**                                        |
+| `bad-wrong-nonce`         | sd-jwt-vc-presentation | nonce **fail**                                           |
+| `overasking-request-dcql` | openid4vp-request      | overasking rules fire (DCQL query)                       |
+| `request-pex`             | openid4vp-request      | no overasking (Presentation Exchange baseline)           |
 
 ## Provenance
 
-- **The seven SD-JWT VC vectors are generated**, not hand-edited. A self-issued issuer (Ed25519
+- **The seven eudi-solana vectors are generated**, not hand-edited. A self-issued issuer (Ed25519
   `did:key`) signs a holder-bound PID SD-JWT VC; presentations carry a real P-256 KB-JWT. The
   generator lives in the reference project:
   `eudi-solana/packages/signer-credo/scripts/gen-inspector-fixtures.ts`.
+- **`good-issuance-es256` is minted independently** by Node's WebCrypto (a different signer than the
+  eudi-solana EdDSA vectors), so the ES256/P-256 issuer-signature path is exercised end-to-end.
+- **`bad-forged-disclosure` is derived** from `good-issuance` by appending one disclosure whose digest
+  is absent from the issuer-signed `_sd`: the issuer signature still verifies, but disclosure-integrity
+  fails — the check that would otherwise let an injected claim through.
 - **The two OpenID4VP request vectors are hand-authored** here (no signer needed).
 
 The good/bad temporal boundary is pinned to `verificationTimeSeconds` (unix `1780000000`); a verifier

@@ -19,6 +19,7 @@ export interface VerifyExpectation {
   readonly issuerSignature: CheckOutcome;
   readonly keyBindingSignature: CheckOutcome;
   readonly sdHash: CheckOutcome;
+  readonly disclosureIntegrity: CheckOutcome;
   readonly temporal: CheckOutcome;
   readonly audience: CheckOutcome;
   readonly nonce: CheckOutcome;

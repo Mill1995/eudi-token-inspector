@@ -103,6 +103,7 @@ export type CheckId =
   | "issuer-signature"
   | "key-binding-signature"
   | "sd-hash"
+  | "disclosure-integrity"
   | "temporal"
   | "audience"
   | "nonce";

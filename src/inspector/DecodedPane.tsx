@@ -64,13 +64,25 @@ function DisclosureRow({ disclosure }: { disclosure: Disclosure }): React.JSX.El
   );
 }
 
-function CredentialView({ credential }: { credential: Credential }): React.JSX.Element {
+function CredentialView({
+  credential,
+  resolved,
+}: {
+  credential: Credential;
+  resolved: Readonly<Record<string, unknown>> | null;
+}): React.JSX.Element {
   return (
     <div className="flex flex-col gap-4">
       <Segment accent="bg-seg-issuer" title="Issuer JWT" hint="issuer-signed">
         <JsonBlock value={credential.issuerJwt.header} />
         <JsonBlock value={credential.issuerJwt.payload} />
       </Segment>
+
+      {resolved !== null && (
+        <Segment accent="bg-seg-disclosure" title="Resolved claims" hint="disclosures applied">
+          <JsonBlock value={resolved} />
+        </Segment>
+      )}
 
       <Segment
         accent="bg-seg-disclosure"
@@ -209,7 +221,13 @@ function CopyButton({ artifact }: { artifact: Artifact }): React.JSX.Element {
 }
 
 /** The decode pane: the artifact split into its segments — a credential's parts or a request's ask. */
-export function DecodedPane({ decode }: { decode: DecodeResult }): React.JSX.Element {
+export function DecodedPane({
+  decode,
+  resolved,
+}: {
+  decode: DecodeResult;
+  resolved: Readonly<Record<string, unknown>> | null;
+}): React.JSX.Element {
   return (
     <Card>
       <CardHeader>
@@ -227,7 +245,7 @@ export function DecodedPane({ decode }: { decode: DecodeResult }): React.JSX.Ele
         {!decode.ok ? (
           <p className="text-fail text-sm">Couldn&rsquo;t decode this artifact: {decode.error}</p>
         ) : decode.artifact.kind === "credential" ? (
-          <CredentialView credential={decode.artifact} />
+          <CredentialView credential={decode.artifact} resolved={resolved} />
         ) : (
           <RequestView request={decode.artifact} />
         )}

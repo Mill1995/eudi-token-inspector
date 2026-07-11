@@ -1,3 +1,4 @@
+import { decodeJws } from "@/domain/jws";
 import { decodePresentationRequest } from "@/domain/presentationRequest";
 import { decodeSdJwtVc } from "@/domain/sdJwt";
 import type { Artifact } from "@/domain/types";
@@ -49,17 +50,51 @@ export type DecodeResult =
   | { readonly ok: true; readonly artifact: Artifact }
   | { readonly ok: false; readonly error: string };
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/** Does a JWT/JSON payload carry the OpenID4VP query that marks it a presentation request? */
+function looksLikeRequest(payload: Readonly<Record<string, unknown>>): boolean {
+  return "dcql_query" in payload || "presentation_definition" in payload;
+}
+
 /**
- * Decode pasted input into an {@link Artifact}, capturing the parse error instead of throwing. Input
- * that starts with `{` is read as an OpenID4VP request JSON; anything else as a compact SD-JWT VC.
+ * Read an OpenID4VP request delivered as JSON. A JAR request-by-value (`{"request": "<jwt>"}`) is
+ * unwrapped to the signed request object's payload; a request-by-reference (`request_uri`) cannot be
+ * followed because the tool makes no network calls (ADR 0003) — the user pastes the fetched request.
+ */
+function decodeRequestJson(raw: unknown): Artifact {
+  if (isRecord(raw) && typeof raw["request"] === "string") {
+    return decodePresentationRequest(decodeJws(raw["request"]).payload);
+  }
+  if (isRecord(raw) && typeof raw["request_uri"] === "string") {
+    throw new Error(
+      "Request delivered by reference (request_uri). This tool makes no network calls — fetch the request object and paste its JWT or decoded JSON.",
+    );
+  }
+  return decodePresentationRequest(raw);
+}
+
+/**
+ * Decode pasted input into an {@link Artifact}, capturing the parse error instead of throwing.
+ * Input starting with `{` is an OpenID4VP request JSON (optionally wrapping a JAR `request` JWT); a
+ * compact JWS whose payload carries an OpenID4VP query is a signed request object; anything else is a
+ * compact SD-JWT VC.
  */
 export function decodeArtifact(input: string): DecodeResult {
   const trimmed = input.trim();
   try {
-    const artifact = trimmed.startsWith("{")
-      ? decodePresentationRequest(JSON.parse(trimmed))
-      : decodeSdJwtVc(trimmed);
-    return { ok: true, artifact };
+    if (trimmed.startsWith("{")) {
+      return { ok: true, artifact: decodeRequestJson(JSON.parse(trimmed)) };
+    }
+    if (!trimmed.includes("~") && trimmed.split(".").length === 3) {
+      const payload = decodeJws(trimmed).payload;
+      if (looksLikeRequest(payload)) {
+        return { ok: true, artifact: decodePresentationRequest(payload) };
+      }
+    }
+    return { ok: true, artifact: decodeSdJwtVc(trimmed) };
   } catch (error) {
     return { ok: false, error: (error as Error).message };
   }

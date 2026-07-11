@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { resolveDisclosures } from "@/domain/disclosures";
 import type { Check, Credential, PresentationRequest } from "@/domain/types";
 import { decodeArtifact, type DecodeResult, type Example, parseIssuerKey } from "@/inspector/model";
 import { evaluateOverasking } from "@/overasking/engine";
@@ -42,6 +43,8 @@ export interface Inspector {
   readonly decode: DecodeResult | null;
   /** Verification checks for a credential; null before one decodes or when the artifact is a request. */
   readonly checks: readonly Check[] | null;
+  /** The credential's claims with every disclosed `_sd`/array digest resolved; null for a request. */
+  readonly resolved: Readonly<Record<string, unknown>> | null;
   readonly verifying: boolean;
   /** Informational issuer-trust result for a credential; null before one decodes or for a request. */
   readonly trust: TrustResult | null;
@@ -81,6 +84,7 @@ function requestOf(decode: DecodeResult | null): PresentationRequest | null {
 export function useInspector(): Inspector {
   const [state, setState] = useState<InspectorState>(emptyState);
   const [checks, setChecks] = useState<readonly Check[] | null>(null);
+  const [resolved, setResolved] = useState<Readonly<Record<string, unknown>> | null>(null);
   const [verifying, setVerifying] = useState(false);
   const [trust, setTrust] = useState<TrustResult | null>(null);
   const [enabledRuleIds, setEnabledRuleIds] = useState<ReadonlySet<string>>(initialEnabledRuleIds);
@@ -152,6 +156,24 @@ export function useInspector(): Inspector {
 
   useEffect(() => {
     if (credential === undefined) {
+      setResolved(null);
+      return undefined;
+    }
+    let cancelled = false;
+    resolveDisclosures(credential)
+      .then((result) => {
+        if (!cancelled) setResolved(result.claims);
+      })
+      .catch(() => {
+        if (!cancelled) setResolved(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [credential]);
+
+  useEffect(() => {
+    if (credential === undefined) {
       setChecks(null);
       setVerifying(false);
       return undefined;
@@ -194,6 +216,7 @@ export function useInspector(): Inspector {
     clear,
     decode,
     checks,
+    resolved,
     verifying,
     trust,
     overasking,

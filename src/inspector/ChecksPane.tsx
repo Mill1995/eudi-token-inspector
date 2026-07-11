@@ -8,6 +8,7 @@ const CHECK_LABELS: Record<CheckId, string> = {
   "issuer-signature": "Issuer signature",
   "key-binding-signature": "Key-binding signature",
   "sd-hash": "Disclosure seal (sd_hash)",
+  "disclosure-integrity": "Disclosure ↔ issuer binding",
   temporal: "Validity window",
   audience: "Audience binding",
   nonce: "Nonce binding",
