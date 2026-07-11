@@ -21,7 +21,7 @@ The inspector is a **configurable trust checker**, not a trust authority:
 - Every trust result is labeled **informational — not an authoritative trust
   decision.**
 
-eIDAS LOTL XML parsing is explicitly deferred (candidate for v2 / team features).
+eIDAS LOTL XML parsing is explicitly deferred (candidate for v2).
 
 ## Consequences
 

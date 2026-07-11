@@ -33,7 +33,7 @@ the browser** under any path.
 - Cost: occasional manual paste when CORS blocks a fetch; a trust snapshot that
   can go stale between builds (documented; a build job keeps it fresh).
 - A proxy for public metadata is a possible later add-on but is explicitly out
-  of v1 — see the paid "team features" line (CI trust-list checks) as its home.
+  of v1.
 
 ## Update (2026-07-09) — what shipped: paste-only
 

@@ -1,8 +1,8 @@
 # Repo setup — branch protection & hardening
 
 One-time GitHub configuration for `Mill1995/eudi-token-inspector`. Run these
-from a shell with `gh` authenticated. Deploy/Cloudflare setup is in
-[`DEPLOY.md`](DEPLOY.md).
+from a shell with `gh` authenticated. Deployment is via Cloudflare's Git
+integration (kept out of this repo).
 
 ## Branch protection ruleset
 
@@ -32,8 +32,7 @@ gh api --method PUT repos/Mill1995/eudi-token-inspector/rulesets/<id> \
 Public repos get secret scanning free. Turn on **push protection** so commits
 containing a detected secret are blocked before they reach GitHub — the
 belt-and-suspenders to `.gitignore`. (Deployment uses Cloudflare's Git
-integration, so there are no Cloudflare secrets in GitHub to leak — see
-[`DEPLOY.md`](DEPLOY.md).)
+integration, so there are no Cloudflare secrets in GitHub to leak.)
 
 ```bash
 gh api --method PATCH repos/Mill1995/eudi-token-inspector \
@@ -64,5 +63,4 @@ gh api --method PATCH repos/Mill1995/eudi-token-inspector -F delete_branch_on_me
 
 - `ci.yml` — `verify` (fmt, lint, typecheck, tests) + `build`, on every push/PR.
   This is the required status check above.
-- Deployment is handled by Cloudflare's Git integration, not a GitHub Action —
-  see [`DEPLOY.md`](DEPLOY.md).
+- Deployment is handled by Cloudflare's Git integration, not a GitHub Action.

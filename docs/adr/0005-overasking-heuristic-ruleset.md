@@ -27,8 +27,7 @@ user-visible data (JSON); each fired rule shows a **severity** and a
 ## Consequences
 
 - No ML and no external service — runs fully client-side, fits the privacy story.
-- Rules-as-data means users can extend/override, and CI rule packs become a
-  natural paid "team features" extension later.
+- Rules-as-data means users can extend/override the rule set themselves.
 - Must be framed as advice; the UI copy must not imply legal judgment.
 - Rules need a small, documented catalog with rationale references (GDPR data
   minimisation, EUDI ARF selective disclosure guidance).
