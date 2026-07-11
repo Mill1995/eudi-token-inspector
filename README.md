@@ -13,10 +13,13 @@ Live at **[eudi-inspector.yannickjourney.com](https://eudi-inspector.yannickjour
 ## What it does
 
 - **Decode** an SD-JWT VC (issuer JWT · disclosures · Key-Binding JWT) or an
-  OpenID4VP request, split into its parts.
-- **Verify** locally over WebCrypto: issuer + holder signatures, the disclosure
-  seal (`sd_hash`), the validity window, and audience/nonce binding. A check is
-  **skip**, never a silent fail, when it has no input to decide.
+  OpenID4VP request, split into its parts — and see the **resolved claim set**
+  with every disclosure woven back into the payload.
+- **Verify** locally over WebCrypto: issuer + holder signatures, the
+  **disclosure↔issuer binding** (each disclosure's digest is in the issuer-signed
+  `_sd`, so an injected claim is caught), the disclosure seal (`sd_hash`), the
+  validity window, and audience/nonce binding. A check is **skip**, never a silent
+  fail, when it has no input to decide.
 - **Trust** — compare the issuer against a bundled snapshot or pasted anchors;
   the result is **informational, not authoritative**.
 - **Overasking** — flag data-minimisation smells in a request against an
@@ -50,11 +53,18 @@ gates: oxlint, oxfmt, `tsc` (strict), vitest.
 
 ## Scope
 
-**v1:** SD-JWT VC (+ Key-Binding JWT) and OpenID4VP presentation requests.
-**v2 (deferred):** mdoc/mDL, eIDAS trusted-list XML parsing. See the ADRs.
+**v1:** SD-JWT VC (+ Key-Binding JWT) and OpenID4VP presentation requests. A
+request can be pasted as decoded JSON, as a signed request object (JAR) JWT, or
+as `{ "request": "<jwt>" }`; a `request_uri` reference can't be followed because
+the tool makes no network calls — fetch it and paste the result.
 
-The trust check is **informational, not authoritative** — it never issues a
-verdict on an issuer's legal standing.
+**v2 (deferred):** **mdoc/mDL (ISO 18013-5, CBOR/COSE)** — the EUDI PID also ships
+in this format, so this is the largest gap; and eIDAS trusted-list XML parsing.
+See the ADRs.
+
+Key resolution is the **paste path** only (paste the issuer JWK/JWKS); `x5c` and
+metadata fetch are not implemented. The trust check is **informational, not
+authoritative** — it never issues a verdict on an issuer's legal standing.
 
 ## License
 

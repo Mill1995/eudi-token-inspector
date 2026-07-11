@@ -11,6 +11,7 @@ const FIELD_TO_CHECK: Record<keyof VerifyExpectation, CheckId> = {
   issuerSignature: "issuer-signature",
   keyBindingSignature: "key-binding-signature",
   sdHash: "sd-hash",
+  disclosureIntegrity: "disclosure-integrity",
   temporal: "temporal",
   audience: "audience",
   nonce: "nonce",
@@ -44,7 +45,7 @@ describe("verifyCredential — missing key reads as skip, never fail (DoD)", () 
     expect(result.byId["issuer-signature"].outcome).toBe("skip");
   });
 
-  it("returns the six checks in a stable order", async () => {
+  it("returns the seven checks in a stable order", async () => {
     const good = sdJwtFixtures.find((f) => f.id === "good-presentation")!;
     const result = await verifyCredential({
       credential: decodeSdJwtVc(good.compact),
@@ -57,6 +58,7 @@ describe("verifyCredential — missing key reads as skip, never fail (DoD)", () 
       "issuer-signature",
       "key-binding-signature",
       "sd-hash",
+      "disclosure-integrity",
       "temporal",
       "audience",
       "nonce",

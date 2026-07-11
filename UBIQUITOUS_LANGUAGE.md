@@ -5,15 +5,16 @@ session; terms are added as decisions land.
 
 ## Artifacts (what a user pastes in)
 
-| Term                     | Definition                                                                                                                 | Aliases to avoid          |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| **Credential**           | An SD-JWT VC: an issuer-signed JWT carrying selectively-disclosable claims.                                                | VC, token, JWT            |
-| **Disclosure**           | A salted `[salt, claim_name, value]` triple that reveals one hidden claim.                                                 | claim blob                |
-| **KB-JWT**               | Key-Binding JWT: a holder-signed JWT proving possession of the credential's bound key, carrying `sd_hash`, `nonce`, `aud`. | binding token, holder JWT |
-| **Presentation Request** | An OpenID4VP Authorization Request stating which claims a verifier wants.                                                  | auth request, ask         |
-| **Query**                | The claim-selection body of a Presentation Request: `presentation_definition` (older) or DCQL (`dcql_query`, newer).       | pex, definition           |
-| **Query Language**       | Which shape a Query is in — `dcql` or `presentation-exchange`. The inspector normalizes both to one model.                 | format                    |
-| **Requested Claim**      | One claim a verifier asks for, normalized across Query languages to a `path` (plus an optional pinned value).              | field, constraint         |
+| Term                     | Definition                                                                                                                         | Aliases to avoid          |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| **Credential**           | An SD-JWT VC: an issuer-signed JWT carrying selectively-disclosable claims.                                                        | VC, token, JWT            |
+| **Disclosure**           | A salted `[salt, claim_name, value]` triple that reveals one hidden claim.                                                         | claim blob                |
+| **`_sd` digest**         | A SHA-256 hash of a Disclosure, embedded in the issuer-signed payload; a Disclosure is bound to the Issuer iff its digest is here. | hash, sd                  |
+| **KB-JWT**               | Key-Binding JWT: a holder-signed JWT proving possession of the credential's bound key, carrying `sd_hash`, `nonce`, `aud`.         | binding token, holder JWT |
+| **Presentation Request** | An OpenID4VP Authorization Request stating which claims a verifier wants.                                                          | auth request, ask         |
+| **Query**                | The claim-selection body of a Presentation Request: `presentation_definition` (older) or DCQL (`dcql_query`, newer).               | pex, definition           |
+| **Query Language**       | Which shape a Query is in — `dcql` or `presentation-exchange`. The inspector normalizes both to one model.                         | format                    |
+| **Requested Claim**      | One claim a verifier asks for, normalized across Query languages to a `path` (plus an optional pinned value).                      | field, constraint         |
 
 ## Actors
 
@@ -48,13 +49,13 @@ session; terms are added as decisions land.
 ## Relationships
 
 - An **Issuer** signs a **Credential**; a **Holder** signs a **KB-JWT** over that Credential.
-- A **Credential** contains one or more **Disclosures**; the **KB-JWT**'s `sd_hash` binds the exact set presented.
+- A **Credential** contains one or more **Disclosures**; each is bound to the **Issuer** by its **`_sd` digest**, and the **KB-JWT**'s `sd_hash` binds the exact set presented.
 - A **Verifier** sends a **Presentation Request** whose **Query** the inspector reads to flag **Overasking**.
 
 ## Example dialogue
 
 > **Dev:** "I pasted a **Credential** and it says the issuer signature is **skip**, not fail — why?"
-> **Domain expert:** "Skip means we couldn't resolve the **Issuer**'s key. There's no `x5c` in the header and the JWKS fetch was CORS-blocked. Paste the JWKS or a **Trust Anchor** and it'll flip to pass or fail."
+> **Domain expert:** "Skip means we couldn't resolve the **Issuer**'s key. The inspector makes no network calls, so it doesn't fetch keys — paste the issuer JWKS/JWK (or a **Trust Anchor**) and it'll flip to pass or fail."
 > **Dev:** "Once I do, does that also tell me if the issuer is trusted?"
 > **Domain expert:** "Different check. Signature says the **Credential** is authentic; the **Trust List check** says the **Issuer** is in your anchors or the **Curated Snapshot**. Both can be pass while trust is still just _informational_."
 > **Dev:** "And the **Overasking** flags — those are on the **Credential**?"

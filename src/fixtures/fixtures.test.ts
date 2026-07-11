@@ -40,7 +40,7 @@ const issuances = sdJwtFixtures.filter((f) => f.kind === "sd-jwt-vc-issuance");
 
 describe("fixture matrix", () => {
   it("loads every committed vector with unique ids", () => {
-    expect(fixtures).toHaveLength(9);
+    expect(fixtures).toHaveLength(11);
     expect(new Set(fixtures.map((f) => f.id)).size).toBe(fixtures.length);
   });
 
@@ -55,6 +55,16 @@ describe("fixture matrix", () => {
 describe("SD-JWT VC compact shape", () => {
   it("ends issuances with a trailing '~' and no KB-JWT", () => {
     for (const fixture of issuances) expect(fixture.compact.endsWith("~"), fixture.id).toBe(true);
+  });
+
+  it("covers both EdDSA and ES256 issuer signature algorithms", () => {
+    const algs = new Set(
+      issuances.map(
+        (f) => (decodeJson(f.compact.split(".")[0] ?? "") as Record<string, unknown>)["alg"],
+      ),
+    );
+    expect(algs).toContain("EdDSA");
+    expect(algs).toContain("ES256");
   });
 
   it("ends presentations with a 3-segment KB-JWT", () => {

@@ -20,10 +20,10 @@ describe("App", () => {
     expect(screen.getByText(/paste an artifact or load an example/i)).toBeInTheDocument();
   });
 
-  it("verifies the good-presentation example to six passing checks", async () => {
+  it("verifies the good-presentation example to seven passing checks", async () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: "good-presentation" }));
-    expect(await screen.findAllByText("Pass")).toHaveLength(6);
+    expect(await screen.findAllByText("Pass")).toHaveLength(7);
     expect(await screen.findByText('"Ada"')).toBeInTheDocument();
   });
 

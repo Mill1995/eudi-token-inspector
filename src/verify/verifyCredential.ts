@@ -1,5 +1,6 @@
 import type { Check, CheckId, Credential } from "@/domain/types";
 import { checkAudience, checkNonce } from "@/verify/binding";
+import { checkDisclosureIntegrity } from "@/verify/disclosureIntegrity";
 import { checkIssuerSignature } from "@/verify/issuerSignature";
 import { checkKeyBindingSignature } from "@/verify/keyBindingSignature";
 import { checkSdHash } from "@/verify/sdHash";
@@ -30,15 +31,17 @@ export interface VerificationResult {
  */
 export async function verifyCredential(input: VerificationInput): Promise<VerificationResult> {
   const { credential, nowSeconds, issuerKey, expectedAudience, expectedNonce } = input;
-  const [issuerSignature, keyBindingSignature, sdHash] = await Promise.all([
+  const [issuerSignature, keyBindingSignature, sdHash, disclosureIntegrity] = await Promise.all([
     checkIssuerSignature(credential, issuerKey),
     checkKeyBindingSignature(credential),
     checkSdHash(credential),
+    checkDisclosureIntegrity(credential),
   ]);
   const checks: readonly Check[] = [
     issuerSignature,
     keyBindingSignature,
     sdHash,
+    disclosureIntegrity,
     checkTemporal(credential, nowSeconds),
     checkAudience(credential, expectedAudience),
     checkNonce(credential, expectedNonce),
